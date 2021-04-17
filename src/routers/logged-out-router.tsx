@@ -1,13 +1,18 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
+interface IFormInputs {
+  email: string;
+  password: string;
+}
+
 export const LoggedOutRouter = () => {
   const {
     register,
     watch,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<IFormInputs>();
   const onSubmit = () => {
     console.log(watch());
   };
@@ -27,7 +32,8 @@ export const LoggedOutRouter = () => {
               pattern: /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
             })}
           />
-          {errors.email && "Email is required"}
+          {errors.email?.type === "required" && "Email is required"}
+          {errors.email?.type === "pattern" && "이메일형식이 아닙니다."}
         </div>
         <div>
           <input
@@ -38,7 +44,8 @@ export const LoggedOutRouter = () => {
             })}
           />
           {errors.password?.type === "required" && "Password is required"}
-          {errors.password?.type === "pattern" && "패스워드 형식이 틀림"}
+          {errors.password?.type === "pattern" &&
+            "패스워드는 8자 이상의 영문과 특수문자가 조합 됩니다."}
         </div>
         <button className="bg-yellow-300 text-white">Submit</button>
       </form>
