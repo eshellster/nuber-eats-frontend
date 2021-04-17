@@ -1,11 +1,18 @@
+import { gql, useQuery } from "@apollo/client";
 import React from "react";
+import { LoggedOutRouter } from "./routers/logged-out-router";
+
+const IS_LOGGED_IN = gql`
+  query isLoggedIn {
+    isLoggedIn @client
+  }
+`;
 
 function App() {
-  return (
-    <div className="bg-black">
-      <h1 className="text-xl text-white">Hello Tailwind</h1>
-    </div>
-  );
+  const { data } = useQuery(IS_LOGGED_IN);
+  console.log(data);
+
+  return <LoggedOutRouter />;
 }
 
 export default App;
