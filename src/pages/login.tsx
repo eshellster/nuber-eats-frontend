@@ -2,6 +2,17 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoginValidationSchema } from "../yup/loginVaidationSchema";
+import { gql, useMutation } from "@apollo/client";
+
+const LOGIN_MUTATION = gql`
+  mutation LoginMutation($email: string!, $password: string!) {
+    login(input: { email: $email, password: $password }) {
+      ok
+      token
+      error
+    }
+  }
+`;
 
 interface ILoginFormInput {
   email: string;
@@ -9,7 +20,6 @@ interface ILoginFormInput {
 }
 
 export const Login = () => {
-  const onSubmit = () => {};
   const {
     register,
     getValues,
@@ -18,6 +28,17 @@ export const Login = () => {
   } = useForm<ILoginFormInput>({
     resolver: yupResolver(LoginValidationSchema),
   });
+  const [loginMutation] = useMutation(LOGIN_MUTATION);
+  const onSubmit = () => {
+    const { email, password } = getValues();
+    loginMutation({
+      variables: {
+        email,
+        password,
+      },
+    });
+  };
+
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
       <div className="bg-gray-50 w-full max-w-lg py-5 rounded-lg text-center">
