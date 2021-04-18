@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { LoginValidationSchema } from "../yup/vaidationSchema";
+import { LoginValidationSchema } from "../yup/loginVaidationSchema";
 
 interface ILoginFormInput {
   email: string;
@@ -27,10 +27,7 @@ export const Login = () => {
           className="grid gap-3 px-5 mt-5"
         >
           <input
-            {...register("email", {
-              required: true,
-              pattern: /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
-            })}
+            {...register("email")}
             name="email"
             placeholder="Email"
             className="input"
@@ -42,10 +39,7 @@ export const Login = () => {
           )}
           <input
             type="password"
-            {...register("password", {
-              required: true,
-              pattern: /^.*(?=^.{8,50}$)(?=.*[a-z])(?=.*[!@#$%^&+=]).*$/,
-            })}
+            {...register("password")}
             placeholder="Password"
             className="input"
           />
