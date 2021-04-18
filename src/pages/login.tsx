@@ -1,5 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { LoginValidationSchema } from "../yup/vaidationSchema";
 
 interface ILoginFormInput {
   email: string;
@@ -13,7 +15,9 @@ export const Login = () => {
     getValues,
     handleSubmit,
     formState: { errors },
-  } = useForm<ILoginFormInput>();
+  } = useForm<ILoginFormInput>({
+    resolver: yupResolver(LoginValidationSchema),
+  });
   return (
     <div className="h-screen flex items-center justify-center bg-gray-800">
       <div className="bg-gray-50 w-full max-w-lg py-5 rounded-lg text-center">
@@ -31,14 +35,9 @@ export const Login = () => {
             placeholder="Email"
             className="input"
           />
-          {errors.email?.type === "required" && (
+          {errors.email?.message && (
             <span className="font-medium text-red-500">
-              이메일을 입력해 주세요
-            </span>
-          )}
-          {errors.email?.type === "pattern" && (
-            <span className="font-medium text-red-500">
-              이메일 형식이 아닙니다
+              {errors.email?.message}
             </span>
           )}
           <input
@@ -50,14 +49,9 @@ export const Login = () => {
             placeholder="Password"
             className="input"
           />
-          {errors.password?.type === "required" && (
+          {errors.password?.message && (
             <span className="font-medium text-red-500">
-              패스워드를 입력해 주세요
-            </span>
-          )}
-          {errors.password?.type === "pattern" && (
-            <span className="font-medium text-red-500">
-              8자이상 영문과 특수문자로 만들어주세요
+              {errors.password?.message}
             </span>
           )}
           <button className="btn mt-3">Log In</button>
