@@ -3,10 +3,14 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoginValidationSchema } from "../yup/loginVaidationSchema";
 import { gql, useMutation } from "@apollo/client";
+import {
+  loginMutation,
+  loginMutationVariables,
+} from "../__generated__/loginMutation";
 
 const LOGIN_MUTATION = gql`
-  mutation LoginMutation($email: string!, $password: string!) {
-    login(input: { email: $email, password: $password }) {
+  mutation loginMutation($loginInput: LoginInput!) {
+    login(input: $loginInput) {
       ok
       token
       error
@@ -17,6 +21,7 @@ const LOGIN_MUTATION = gql`
 interface ILoginFormInput {
   email: string;
   password: string;
+  resultError?: string;
 }
 
 export const Login = () => {
@@ -28,13 +33,23 @@ export const Login = () => {
   } = useForm<ILoginFormInput>({
     resolver: yupResolver(LoginValidationSchema),
   });
-  const [loginMutation] = useMutation(LOGIN_MUTATION);
+  const onCompleted = (data: loginMutation) => {
+    const {
+      login: { error, ok, token },
+    } = data;
+    if (ok) {
+      console.log(token);
+    }
+  };
+  const [loginMutation, { data: loginMutationResult }] = useMutation<
+    loginMutation,
+    loginMutationVariables
+  >(LOGIN_MUTATION, { onCompleted });
   const onSubmit = () => {
     const { email, password } = getValues();
     loginMutation({
       variables: {
-        email,
-        password,
+        loginInput: { email, password },
       },
     });
   };
@@ -70,6 +85,9 @@ export const Login = () => {
             </span>
           )}
           <button className="btn mt-3">Log In</button>
+          <span className="font-medium text-red-500">
+            {loginMutationResult?.login.error}
+          </span>
         </form>
       </div>
     </div>
