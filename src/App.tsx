@@ -1,4 +1,3 @@
-import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { LoggedOutRouter } from "./routers/logged-out-router";
 

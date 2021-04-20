@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoginValidationSchema } from "../yup/loginVaidationSchema";
@@ -29,29 +29,41 @@ export const Login = () => {
     register,
     getValues,
     handleSubmit,
-    formState: { errors },
+    watch,
+    formState: { errors, isDirty },
   } = useForm<ILoginFormInput>({
     resolver: yupResolver(LoginValidationSchema),
   });
+
   const onCompleted = (data: loginMutation) => {
     const {
-      login: { error, ok, token },
+      login: { ok, token },
     } = data;
     if (ok) {
       console.log(token);
     }
   };
-  const [loginMutation, { data: loginMutationResult }] = useMutation<
+
+  const [loginMutation, { data: loginMutationResult, loading }] = useMutation<
     loginMutation,
     loginMutationVariables
   >(LOGIN_MUTATION, { onCompleted });
+
+  const [preValue, setPreValue] = useState(["", ""]);
+
   const onSubmit = () => {
     const { email, password } = getValues();
-    loginMutation({
-      variables: {
-        loginInput: { email, password },
-      },
-    });
+
+    if (!loading) {
+      if (email !== preValue[0] || password !== preValue[1]) {
+        loginMutation({
+          variables: {
+            loginInput: { email, password },
+          },
+        });
+      }
+      setPreValue([email, password]);
+    }
   };
 
   return (
@@ -84,7 +96,9 @@ export const Login = () => {
               {errors.password?.message}
             </span>
           )}
-          <button className="btn mt-3">Log In</button>
+          <button className="btn mt-3">
+            {loading ? "loading..." : "Log In"}
+          </button>
           <span className="font-medium text-red-500">
             {loginMutationResult?.login.error}
           </span>
