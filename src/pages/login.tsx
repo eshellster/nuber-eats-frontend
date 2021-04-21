@@ -12,7 +12,7 @@ import {
 } from "../__generated__/loginMutation";
 import { Button } from "../components/button";
 import { Link } from "react-router-dom";
-import { authToken, isLoggedInVar } from "../apollo";
+import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 
 const LOGIN_MUTATION = gql`
@@ -48,7 +48,7 @@ export const Login = () => {
     } = data;
     if (ok && token) {
       localStorage.setItem(LOCALSTORAGE_TOKEN, token);
-      authToken(token);
+      authTokenVar(token);
       isLoggedInVar(true);
     }
   };
