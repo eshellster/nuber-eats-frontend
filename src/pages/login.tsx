@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useState } from "react";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { LoginValidationSchema } from "../yup/loginVaidationSchema";
+import { ValidationSchema } from "../yup/vaidationSchema";
 import { gql, useMutation } from "@apollo/client";
 import noberLogo from "../images/logo.svg";
 import {
@@ -12,6 +12,8 @@ import {
 } from "../__generated__/loginMutation";
 import { Button } from "../components/button";
 import { Link } from "react-router-dom";
+import { authToken, isLoggedInVar } from "../apollo";
+import { LOCALSTORAGE_TOKEN } from "../constants";
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
@@ -36,7 +38,7 @@ export const Login = () => {
     handleSubmit,
     formState: { errors, isValid },
   } = useForm<ILoginFormInput>({
-    resolver: yupResolver(LoginValidationSchema),
+    resolver: yupResolver(ValidationSchema),
     mode: "onChange",
   });
 
@@ -44,8 +46,10 @@ export const Login = () => {
     const {
       login: { ok, token },
     } = data;
-    if (ok) {
-      console.log(token);
+    if (ok && token) {
+      localStorage.setItem(LOCALSTORAGE_TOKEN, token);
+      authToken(token);
+      isLoggedInVar(true);
     }
   };
 

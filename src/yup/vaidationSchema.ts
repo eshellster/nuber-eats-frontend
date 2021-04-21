@@ -7,7 +7,7 @@ const withAlphabat = "영어문자가 포함되어야 합니다.";
 const emailNotRequited = "이메일 주소를 입력해주세요";
 const passwordNotRequited = "패스워드를 입력해주세요";
 
-export const LoginValidationSchema = yup.object().shape({
+export const ValidationSchema = yup.object().shape({
   email: yup
     .string()
     .required(emailNotRequited)
