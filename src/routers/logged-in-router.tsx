@@ -15,7 +15,8 @@ const ME_QUERY = gql`
 
 export const LoggedInRouter = () => {
   const { data, loading, error } = useQuery(ME_QUERY);
-  if (true) {
+  console.log(data);
+  if (loading) {
     return (
       <div className="h-screen flex justify-center items-center">
         <span className="font-semibold tracking-wide">Loading...</span>
