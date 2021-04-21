@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { isLoggedInVar } from "../apollo";
+import { meQuery } from "../__generated__/meQuery";
 
 const ME_QUERY = gql`
   query meQuery {
@@ -14,9 +15,9 @@ const ME_QUERY = gql`
 `;
 
 export const LoggedInRouter = () => {
-  const { data, loading, error } = useQuery(ME_QUERY);
+  const { data, loading, error } = useQuery<meQuery>(ME_QUERY);
   console.log(data);
-  if (loading) {
+  if (!data || loading || error) {
     return (
       <div className="h-screen flex justify-center items-center">
         <span className="font-semibold tracking-wide">Loading...</span>
@@ -25,7 +26,7 @@ export const LoggedInRouter = () => {
   }
   return (
     <div>
-      <div>Logged In</div>
+      <div>{JSON.stringify(data.me)}</div>
       <button onClick={() => isLoggedInVar(false)}>Log out</button>
     </div>
   );
