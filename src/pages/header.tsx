@@ -1,12 +1,21 @@
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { Link } from "react-router-dom";
+import { useMe } from "../hooks/useMe";
 import nuberLogo from "../images/logo.svg";
 
 export const Header = () => {
+  const { data } = useMe();
   return (
-    <header className="bg-red-500 py-4">
-      <div className="bg-yellow-500 w-full max-w-screen-xl mx-auto flex justify-between items-center">
+    <header className=" py-4">
+      <div className="px-5 xl:px-0 w-full max-w-screen-xl mx-auto flex justify-between items-center">
         <img src={nuberLogo} className="w-24" alt="Nuber Eats" />
-        im the header
+        <span className="text-xs">
+          <Link to="/my-profile">
+            <FontAwesomeIcon icon={faUser} className="text-xl" />
+          </Link>
+        </span>
       </div>
     </header>
   );
