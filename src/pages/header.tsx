@@ -2,6 +2,7 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Link } from "react-router-dom";
+import { isLoggedInVar } from "../apollo";
 import { useMe } from "../hooks/useMe";
 import nuberLogo from "../images/logo.svg";
 
@@ -27,6 +28,7 @@ export const Header: React.FC<IHeaderProps> = ({ email }) => {
             </Link>
           </span>
           <span className="text-xs">{email}</span>
+          <button onClick={() => isLoggedInVar(false)}>Log Out</button>
         </div>
       </header>
     </>

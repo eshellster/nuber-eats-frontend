@@ -8,17 +8,20 @@ import {
 import { useMe } from "../hooks/useMe";
 import { Restaurants } from "../pages/client/restaurants";
 import { Header } from "../pages/header";
+import { ConfirmEmail } from "../pages/user/confirmEmail";
 import { UserRole } from "../__generated__/globalTypes";
 
 const ClientRoutes = [
-  <Route key="restaurants" path="/" exact>
+  <Route key={1} path="/" exact>
     <Restaurants />
+  </Route>,
+  <Route key={2} path="/confirm" exact>
+    <ConfirmEmail />
   </Route>,
 ];
 
 export const LoggedInRouter = () => {
   const { data, loading, error } = useMe();
-  // console.log(data);
   if (!data || loading || error) {
     return (
       <div className="h-screen flex justify-center items-center">
