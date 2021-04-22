@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { useMe } from "../hooks/useMe";
 import { Restaurants } from "../pages/client/restaurants";
-import { Header } from "../pages/header";
+import { Header } from "../components/header";
 import { ConfirmEmail } from "../pages/user/confirmEmail";
 import { UserRole } from "../__generated__/globalTypes";
 

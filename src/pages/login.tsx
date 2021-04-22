@@ -3,17 +3,17 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ValidationSchema } from "../../yup/vaidationSchema";
+import { ValidationSchema } from "../yup/vaidationSchema";
 import { gql, useMutation } from "@apollo/client";
-import noberLogo from "../../images/logo.svg";
+import noberLogo from "../images/logo.svg";
 import {
   loginMutation,
   loginMutationVariables,
-} from "../../__generated__/loginMutation";
-import { Button } from "../../components/button";
+} from "../__generated__/loginMutation";
+import { Button } from "../components/button";
 import { Link } from "react-router-dom";
-import { authTokenVar, isLoggedInVar } from "../../apollo";
-import { LOCALSTORAGE_TOKEN } from "../../constants";
+import { authTokenVar, isLoggedInVar } from "../apollo";
+import { LOCALSTORAGE_TOKEN } from "../constants";
 
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
