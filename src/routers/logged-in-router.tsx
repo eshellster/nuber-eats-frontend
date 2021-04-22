@@ -1,12 +1,17 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from "react-router-dom";
 import { useMe } from "../hooks/useMe";
 import { Restaurants } from "../pages/client/restaurants";
 import { Header } from "../pages/header";
 import { UserRole } from "../__generated__/globalTypes";
 
 const ClientRoutes = [
-  <Route key="restaurants">
+  <Route key="restaurants" path="/" exact>
     <Restaurants />
   </Route>,
 ];
@@ -23,10 +28,10 @@ export const LoggedInRouter = () => {
   }
   return (
     <Router>
-      <Header />
+      <Header email={data.me.email} />
       <Switch>
         {data.me.role === UserRole.Client && ClientRoutes}
-        {/* <Redirect to="/" /> */}
+        <Redirect to="/" />
       </Switch>
     </Router>
   );

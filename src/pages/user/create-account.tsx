@@ -3,16 +3,16 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ValidationSchema } from "../yup/vaidationSchema";
+import { ValidationSchema } from "../../yup/vaidationSchema";
 import { gql, useMutation } from "@apollo/client";
-import noberLogo from "../images/logo.svg";
-import { Button } from "../components/button";
+import noberLogo from "../../images/logo.svg";
+import { Button } from "../../components/button";
 import { Link, useHistory } from "react-router-dom";
-import { UserRole } from "../__generated__/globalTypes";
+import { UserRole } from "../../__generated__/globalTypes";
 import {
   createAccountMutation,
   createAccountMutationVariables,
-} from "../__generated__/createAccountMutation";
+} from "../../__generated__/createAccountMutation";
 
 const CREATE_ACCOUNT_MUTATION = gql`
   mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
