@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { gql, useApolloClient, useMutation } from "@apollo/client";
 import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
