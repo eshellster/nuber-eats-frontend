@@ -1,6 +1,5 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { data } from "autoprefixer";
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
@@ -28,13 +27,32 @@ const EDIT_PROFILE_MUTATION = gql`
 
 export const EditProfile = () => {
   const { data: userData } = useMe();
+  const client = useApolloClient();
 
   const onCompleted = (data: editProfile) => {
     const {
       editProfile: { ok },
     } = data;
-    if (ok) {
-      //update the cache
+    if (ok && userData) {
+      const {
+        me: { email: prevEmail, id },
+      } = userData;
+      const { email: newEmail } = getValues();
+      if (prevEmail !== newEmail) {
+        client.writeFragment({
+          id: `User:${id}`,
+          fragment: gql`
+            fragment EditedUser on User {
+              verified
+              email
+            }
+          `,
+          data: {
+            email: newEmail,
+            verified: false,
+          },
+        });
+      }
     }
   };
 
