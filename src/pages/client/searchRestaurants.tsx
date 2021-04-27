@@ -1,27 +1,26 @@
-import { gql } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { RESTAURANT_FRAGMENT } from "../../fragments";
+import {
+  searchRestaurantsQuery,
+  searchRestaurantsQueryVariables,
+} from "../../__generated__/searchRestaurantsQuery";
 
 const SEARCH_RESTAURANTS_QUERY = gql`
   query searchRestaurantsQuery($input: SearchRestaurantsInput!) {
-    searchRestaurants {
+    searchRestaurants(input: $input) {
       ok
       error
       totalPages
       totalResults
       restaurants {
-        id
-        name
-        coverImg
-        category {
-          name
-        }
-        address
-        isPromoted
+        ...RestaurantParts
       }
     }
   }
+  ${RESTAURANT_FRAGMENT}
 `;
 
 interface LocationState {
@@ -30,17 +29,26 @@ interface LocationState {
 
 export const SearchRestaurants = () => {
   const location = useLocation<LocationState>();
-  const history = useHistory();
+  const [queryReadyToStart, { loading, data, called }] = useLazyQuery<
+    searchRestaurantsQuery,
+    searchRestaurantsQueryVariables
+  >(SEARCH_RESTAURANTS_QUERY);
   useEffect(() => {
     const {
       state: { searchRestaurantTerm },
     } = location;
-    console.log(searchRestaurantTerm);
 
-    if (!searchRestaurantTerm) {
-      history.replace("/");
-    }
-  }, []);
+    queryReadyToStart({
+      variables: {
+        input: {
+          page: 1,
+          limit: 6,
+          query: searchRestaurantTerm,
+        },
+      },
+    });
+  }, [location]); // eslint-disable-line
+  console.log(loading, data, called);
 
   return (
     <div>
