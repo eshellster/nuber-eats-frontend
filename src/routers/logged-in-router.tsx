@@ -46,7 +46,7 @@ export const LoggedInRouter = () => {
       <Header email={data.me.email} />
       <Switch>
         {data.me.role === UserRole.Client && ClientRoutes}
-        {/* <Redirect to="/" /> */}
+        <Redirect to="/" />
       </Switch>
     </Router>
   );

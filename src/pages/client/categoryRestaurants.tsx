@@ -33,18 +33,18 @@ interface ICategoryParams {
 export const CategoryRestaurants = () => {
   const { slug } = useParams<ICategoryParams>();
   // console.log(params);
-  const { data, loading } = useQuery<
-    categoryRestaurants,
-    categoryRestaurantsVariables
-  >(CATEGORY_RESTAURANTS, {
-    variables: {
-      input: {
-        page: 1,
-        limit: 6,
-        slug: slug,
+  const { data } = useQuery<categoryRestaurants, categoryRestaurantsVariables>(
+    CATEGORY_RESTAURANTS,
+    {
+      variables: {
+        input: {
+          page: 1,
+          limit: 6,
+          slug: slug,
+        },
       },
-    },
-  });
+    }
+  );
 
   console.log(data);
 
