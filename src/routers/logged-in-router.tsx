@@ -11,16 +11,20 @@ import { Header } from "../components/header";
 import { ConfirmEmail } from "../pages/user/confirmEmail";
 import { UserRole } from "../__generated__/globalTypes";
 import { EditProfile } from "../pages/user/edit-profile";
+import { SearchRestaurants } from "../pages/client/searchRestaurants";
 
 const ClientRoutes = [
   <Route key={1} path="/" exact>
     <Restaurants />
   </Route>,
-  <Route key={2} path="/confirm" exact>
+  <Route key={2} path="/confirm">
     <ConfirmEmail />
   </Route>,
-  <Route key={3} path="/edit-profile" exact>
+  <Route key={3} path="/edit-profile">
     <EditProfile />
+  </Route>,
+  <Route key={4} path="/search-restaurants">
+    <SearchRestaurants />
   </Route>,
 ];
 

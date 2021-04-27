@@ -41,7 +41,7 @@ const RESTAURANTS_QUERY = gql`
 `;
 
 interface IFormProps {
-  searchTerm: string;
+  searchRestaurantTerm: string;
 }
 
 export const Restaurants = () => {
@@ -62,10 +62,10 @@ export const Restaurants = () => {
   const { register, handleSubmit, getValues } = useForm<IFormProps>();
   const history = useHistory();
   const onSearchSubmit = () => {
-    const { searchTerm } = getValues();
+    const { searchRestaurantTerm } = getValues();
     history.push({
-      pathname: "/search",
-      search: `?term=${searchTerm}`,
+      pathname: "/search-restaurants",
+      state: { searchRestaurantTerm },
     });
   };
   return (
@@ -75,7 +75,7 @@ export const Restaurants = () => {
         className="bg-gray-800 w-full py-40 flex items-center justify-center"
       >
         <input
-          {...register("searchTerm", { required: true, min: 3 })}
+          {...register("searchRestaurantTerm", { required: true, min: 3 })}
           type="Search"
           className="input rounded-md border-0 w-3/4 md:w-1/3"
           placeholder="Search restaurants..."

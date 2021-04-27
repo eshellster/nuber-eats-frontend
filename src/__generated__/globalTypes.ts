@@ -34,6 +34,12 @@ export interface RestaurantsInput {
   limit: number;
 }
 
+export interface SearchRestaurantsInput {
+  page?: number | null;
+  limit: number;
+  query: string;
+}
+
 export interface VerifyEmailInput {
   code: string;
 }
