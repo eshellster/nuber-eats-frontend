@@ -1,7 +1,7 @@
 import { gql, useLazyQuery } from "@apollo/client";
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   searchRestaurantsQuery,
@@ -29,6 +29,7 @@ interface LocationState {
 
 export const SearchRestaurants = () => {
   const location = useLocation<LocationState>();
+  const history = useHistory();
   const [queryReadyToStart, { loading, data, called }] = useLazyQuery<
     searchRestaurantsQuery,
     searchRestaurantsQueryVariables
@@ -37,7 +38,9 @@ export const SearchRestaurants = () => {
     const {
       state: { searchRestaurantTerm },
     } = location;
-
+    if (searchRestaurantTerm === "korean") {
+      return history.replace("/");
+    }
     queryReadyToStart({
       variables: {
         input: {
