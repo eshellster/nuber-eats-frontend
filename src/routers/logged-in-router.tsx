@@ -12,6 +12,7 @@ import { ConfirmEmail } from "../pages/user/confirmEmail";
 import { UserRole } from "../__generated__/globalTypes";
 import { EditProfile } from "../pages/user/edit-profile";
 import { SearchRestaurants } from "../pages/client/searchRestaurants";
+import { CategoryRestaurants } from "../pages/client/categoryRestaurants";
 
 const ClientRoutes = [
   <Route key={1} path="/" exact>
@@ -25,6 +26,9 @@ const ClientRoutes = [
   </Route>,
   <Route key={4} path="/search-restaurants">
     <SearchRestaurants />
+  </Route>,
+  <Route key={5} path="/category-restaurants/:slug">
+    <CategoryRestaurants />
   </Route>,
 ];
 
@@ -42,7 +46,7 @@ export const LoggedInRouter = () => {
       <Header email={data.me.email} />
       <Switch>
         {data.me.role === UserRole.Client && ClientRoutes}
-        <Redirect to="/" />
+        {/* <Redirect to="/" /> */}
       </Switch>
     </Router>
   );

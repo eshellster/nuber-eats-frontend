@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
 import { Restaurant } from "../../components/restaurants";
 import { RESTAURANT_FRAGMENT } from "../../fragments";
 import {
@@ -71,7 +72,7 @@ export const Restaurants = () => {
       </Helmet>
       <form
         onSubmit={handleSubmit(onSearchSubmit)}
-        className="bg-gray-800 w-full py-40 flex items-center justify-center"
+        className="bg-gray-800 w-full py-10 flex items-center justify-center"
       >
         <input
           {...register("searchRestaurantTerm", { required: true, min: 3 })}
@@ -83,19 +84,21 @@ export const Restaurants = () => {
       {!loading && (
         <div className="max-w-screen-xl mx-auto mt-8">
           <div className="overflow-x-auto flex max-w-5xl mx-auto ">
-            {data?.allCategories.categories?.map((category, index) => (
-              <div
-                key={index}
-                className="flex flex-col group items-center cursor-pointer px-5"
+            {data?.allCategories.categories?.map((category) => (
+              <Link
+                key={category.id}
+                to={`/category-restaurants/${category.slug}`}
               >
-                <div
-                  className="w-24 h-24 bg-cover border-2 border-opacity-0 border-green-500  group-hover:border-opacity-100 rounded-full"
-                  style={{ backgroundImage: `url(${category.coverImg})` }}
-                ></div>
-                <span className="mt-1 text-sm text-center font-medium group-hover:text-green-800">
-                  {category.name}
-                </span>
-              </div>
+                <div className="flex flex-col group items-center cursor-pointer px-5">
+                  <div
+                    className="w-24 h-24 bg-cover border-2 border-opacity-0 border-green-500  group-hover:border-opacity-100 rounded-full"
+                    style={{ backgroundImage: `url(${category.coverImg})` }}
+                  ></div>
+                  <span className="mt-1 text-sm text-center font-medium group-hover:text-green-800">
+                    {category.name}
+                  </span>
+                </div>
+              </Link>
             ))}
           </div>
           <div className="mt-10 grid md:grid-cols-3 gap-x-5 gap-y-5">

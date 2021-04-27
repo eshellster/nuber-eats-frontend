@@ -13,6 +13,12 @@ export enum UserRole {
   Owner = "Owner",
 }
 
+export interface CategoryInput {
+  page?: number | null;
+  limit: number;
+  slug: string;
+}
+
 export interface CreateAccountInput {
   email: string;
   password: string;
