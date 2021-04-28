@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
-import { Redirect, useHistory, useParams } from "react-router";
+import { Helmet } from "react-helmet-async";
+import { useParams } from "react-router";
 import { RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   restaurantQuery,
@@ -26,7 +27,6 @@ interface IParamProp {
 
 export const Restaurant = () => {
   const { id } = useParams<IParamProp>();
-  const history = useHistory();
   const { loading, data } = useQuery<restaurantQuery, restaurantQueryVariables>(
     RESTAURANT_QUERY,
     {
@@ -38,5 +38,34 @@ export const Restaurant = () => {
     }
   );
 
-  return <div>{data?.restaurant.error && <div>레스토랑이 없습니다.</div>}</div>;
+  return (
+    <div>
+      <Helmet>
+        <title>{data?.restaurant.restaurant?.name || ""} | Nuber eats</title>
+      </Helmet>
+      {data?.restaurant.error && <div>레스토랑이 없습니다.</div>}
+      {!loading && (
+        <div>
+          <header
+            className="bg-gray-500 w-full py-24  bg-cover bg-center bg-"
+            style={{
+              backgroundImage: `url(${data?.restaurant.restaurant?.coverImg})`,
+            }}
+          >
+            <div className="bg-white max-w-sm py-8 pl-48">
+              <h4 className="text-4xl mb-3">
+                {data?.restaurant.restaurant?.name}
+              </h4>
+              <h5 className="text-sm font-light mb-2">
+                {data?.restaurant.restaurant?.category?.name}
+              </h5>
+              <h6 className="text-sm font-light">
+                {data?.restaurant.restaurant?.address}
+              </h6>
+            </div>
+          </header>
+        </div>
+      )}
+    </div>
+  );
 };
