@@ -103,13 +103,14 @@ export const Restaurants = () => {
           </div>
           <div className="mt-10 grid md:grid-cols-3 gap-x-5 gap-y-5">
             {data?.restaurants.results?.map((restaurant) => (
-              <Restaurant
-                key={restaurant.id}
-                id={restaurant.id + ""}
-                coverImg={restaurant.coverImg + ""}
-                name={restaurant.name}
-                categoryName={restaurant.category?.name}
-              />
+              <Link key={restaurant.id} to={`/restaurant/${restaurant.id}`}>
+                <Restaurant
+                  id={restaurant.id + ""}
+                  coverImg={restaurant.coverImg + ""}
+                  name={restaurant.name}
+                  categoryName={restaurant.category?.name}
+                />
+              </Link>
             ))}
           </div>
           <div className="grid grid-cols-3 text-center max-w-md items-center mx-auto mt-10">
