@@ -9,9 +9,16 @@ module.exports = {
       colors: {
         lime: colors.lime,
       },
+      transformOrigin: {
+        0: "0%",
+      },
+      zIndex: {
+        "-1": "-1",
+      },
     },
   },
   variants: {
+    borderColor: ["responsive", "hover", "focus", "focus-within"],
     extend: {},
   },
   plugins: [],

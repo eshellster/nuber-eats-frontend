@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useForm } from "react-hook-form";
+import { useForm, useFormState } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ValidationSchema } from "../yup/vaidationSchema";
 import { gql, useMutation } from "@apollo/client";
@@ -36,10 +36,10 @@ export const Login = () => {
     register,
     getValues,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isDirty },
   } = useForm<ILoginFormInput>({
     resolver: yupResolver(ValidationSchema),
-    mode: "onChange",
+    mode: "onTouched",
   });
 
   const onCompleted = (data: loginMutation) => {
@@ -75,6 +75,10 @@ export const Login = () => {
     }
   };
 
+  useEffect(() => {
+    console.log("isDirty", isDirty);
+  }, [isDirty]);
+
   return (
     <div className="h-screen flex items-center flex-col mt-10 lg:mt-32">
       <Helmet>
@@ -89,29 +93,53 @@ export const Login = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="grid gap-3 mt-5 w-full"
         >
-          <input
-            {...register("email")}
-            name="email"
-            placeholder="Email"
-            className="input"
-          />
-          {errors.email?.message && (
-            <span className="font-medium text-red-500">
+          <div
+            className={`relative my-4 border-b-2 ${
+              errors.email?.message
+                ? "border-red-500"
+                : "focus-within:border-blue-500"
+            }`}
+          >
+            <input
+              {...register("email")}
+              name="email"
+              placeholder=" "
+              className="block w-full appearance-none focus:outline-none bg-transparent"
+            />
+            <label
+              htmlFor="username"
+              className="absolute top-0 -z-1 duration-300 origin-0 text-gray-400"
+            >
+              이메일
+            </label>
+            <div className="absolute font-medium text-sm text-gray-400">
               {errors.email?.message}
-            </span>
-          )}
-          <input
-            type="password"
-            {...register("password")}
-            placeholder="Password"
-            className="input"
-          />
-          {errors.password?.message && (
-            <span className="font-medium text-red-500">
+            </div>
+          </div>
+          <div
+            className={`relative my-4 border-b-2 ${
+              errors.password?.message
+                ? "border-red-500"
+                : "focus-within:border-blue-500"
+            }`}
+          >
+            <input
+              {...register("password")}
+              name="password"
+              placeholder=" "
+              className="block w-full appearance-none focus:outline-none bg-transparent"
+            />
+            <label
+              htmlFor="password"
+              className="absolute top-0 -z-1 duration-300 origin-0 text-gray-400"
+            >
+              패스워드
+            </label>
+            <div className="absolute font-medium text-sm text-gray-400">
               {errors.password?.message}
-            </span>
-          )}
-          <Button canClick={isValid} loading={loading} actionText={"Log in"} />
+            </div>
+          </div>
+          <Button canClick={true} loading={loading} actionText={"Log in"} />
           <span className="font-medium text-red-500 mb-4">
             {loginMutationResult?.login.error}
           </span>

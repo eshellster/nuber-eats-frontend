@@ -60,7 +60,8 @@
   "jest": {
     "collectCoverageFrom": [
       "./src/pages/**/*.tsx",
-      "./src/routers/**/*.tsx"
+      "./src/routers/**/*.tsx",
+      "./src/components/**/*.tsx"
     ]
   },
   "devDependencies": {
