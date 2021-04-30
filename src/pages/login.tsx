@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useForm, useFormState } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ValidationSchema } from "../yup/vaidationSchema";
 import { gql, useMutation } from "@apollo/client";
@@ -36,7 +36,7 @@ export const Login = () => {
     register,
     getValues,
     handleSubmit,
-    formState: { errors, isValid, isDirty },
+    formState: { errors },
   } = useForm<ILoginFormInput>({
     resolver: yupResolver(ValidationSchema),
     mode: "onTouched",
@@ -74,10 +74,6 @@ export const Login = () => {
       setPreValue([email, password]);
     }
   };
-
-  useEffect(() => {
-    console.log("isDirty", isDirty);
-  }, [isDirty]);
 
   return (
     <div className="h-screen flex items-center flex-col mt-10 lg:mt-32">
@@ -126,6 +122,7 @@ export const Login = () => {
             <input
               {...register("password")}
               name="password"
+              type="password"
               placeholder=" "
               className="block w-full appearance-none focus:outline-none bg-transparent"
             />
