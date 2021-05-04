@@ -104,6 +104,7 @@ export const Restaurants = () => {
           <div className="mt-10 grid md:grid-cols-3 gap-x-5 gap-y-5">
             {data?.restaurants.results?.map((restaurant) => (
               <Restaurant
+                key={restaurant.id}
                 id={restaurant.id + ""}
                 coverImg={restaurant.coverImg + ""}
                 name={restaurant.name}

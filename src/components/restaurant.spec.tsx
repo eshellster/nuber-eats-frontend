@@ -11,7 +11,7 @@ describe("Restaurant />", () => {
       categoryName: "categoryName",
       coverImg: "lala",
     };
-    const { getByText, container } = render(
+    const { getByText, container, debug } = render(
       <Router>
         <Restaurant {...restaurantProps} />
       </Router>
@@ -20,7 +20,8 @@ describe("Restaurant />", () => {
     getByText(restaurantProps.categoryName);
     expect(container.firstChild).toHaveAttribute(
       "href",
-      `/restaurants/${restaurantProps.id}`
+      `//restaurant/${restaurantProps.id}`
     );
+    debug();
   });
 });
