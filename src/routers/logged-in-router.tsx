@@ -15,12 +15,12 @@ const clientRoutes = [
   { path: "/", component: <Restaurants /> },
   { path: "/search-restaurants", component: <SearchRestaurants /> },
   { path: "/category-restaurants/:slug", component: <CategoryRestaurants /> },
-  { path: "/restaurant/:id", component: <Restaurant /> },
 ];
 
 const commonRoutes = [
   { path: "/confirm", component: <ConfirmEmail /> },
   { path: "/edit-profile", component: <EditProfile /> },
+  { path: "/restaurant/:id", component: <Restaurant /> },
 ];
 
 const restaurantRoutes = [{ path: "/", component: <MyRestaurants /> }];
