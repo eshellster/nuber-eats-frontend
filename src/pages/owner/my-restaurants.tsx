@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { Restaurant } from "../../components/restaurant";
@@ -26,6 +26,7 @@ const MY_RESTAURANTS_QUERY = gql`
 
 export const MyRestaurants = () => {
   const [page, setPage] = useState(1);
+  const [pageNav, setPageNav] = useState<Number>(0);
   const { data } = useQuery<myRestaurants, myRestaurantsVariables>(
     MY_RESTAURANTS_QUERY,
     {
@@ -38,6 +39,11 @@ export const MyRestaurants = () => {
     }
   );
   console.log(data);
+  useEffect(() => {
+    if (data?.myRestaurants.totalPages) {
+      setPageNav(data?.myRestaurants.totalPages);
+    }
+  }, []);
 
   const onNextPageClick = () => setPage((current) => current + 1);
   const onPrevPageClick = () => setPage((current) => current - 1);
@@ -59,31 +65,34 @@ export const MyRestaurants = () => {
             />
           ))}
         </div>
-        <div className="grid grid-cols-3 text-center max-w-md items-center mx-auto mt-10">
-          {page > 1 ? (
-            <button
-              className="focus:outline-none font-medium text-2xl"
-              onClick={onPrevPageClick}
-            >
-              &larr;
-            </button>
-          ) : (
-            <div></div>
-          )}
-          <span>
-            Page {page} of {data?.myRestaurants.totalPages}
-          </span>
-          {page !== data?.myRestaurants.totalPages ? (
-            <button
-              className="focus:outline-none font-medium text-2xl"
-              onClick={onNextPageClick}
-            >
-              &rarr;
-            </button>
-          ) : (
-            <div></div>
-          )}
-        </div>
+        {pageNav > 1 && (
+          <div className="grid grid-cols-3 text-center max-w-md items-center mx-auto mt-10">
+            {page > 1 ? (
+              <button
+                className="focus:outline-none font-medium text-2xl"
+                onClick={onPrevPageClick}
+              >
+                &larr;
+              </button>
+            ) : (
+              <div></div>
+            )}
+            <span>
+              Page {page} of {data?.myRestaurants.totalPages}
+            </span>
+            {page !== data?.myRestaurants.totalPages ? (
+              <button
+                className="focus:outline-none font-medium text-2xl"
+                onClick={onNextPageClick}
+              >
+                &rarr;
+              </button>
+            ) : (
+              <div></div>
+            )}
+          </div>
+        )}
+
         {data?.myRestaurants.ok && data.myRestaurants.results?.length === 0 && (
           <>
             <h4 className="text-xl mb-5">You have no restaurants.</h4>
