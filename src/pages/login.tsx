@@ -15,8 +15,6 @@ import { Link } from "react-router-dom";
 import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 import { Input } from "../components/input";
-import { data } from "autoprefixer";
-
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
     login(input: $loginInput) {
@@ -91,11 +89,6 @@ export const Login = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="grid gap-3 mt-5 w-full"
         >
-          <Input
-            name="email"
-            register={register}
-            errorMessage={errors.email?.message}
-          />
           <div
             className={`relative my-4 border-b-2 ${
               errors.email?.message

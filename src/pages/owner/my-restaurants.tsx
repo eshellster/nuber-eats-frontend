@@ -26,7 +26,6 @@ const MY_RESTAURANTS_QUERY = gql`
 
 export const MyRestaurants = () => {
   const [page, setPage] = useState(1);
-  const [pageNav, setPageNav] = useState<Number>(0);
   const { data } = useQuery<myRestaurants, myRestaurantsVariables>(
     MY_RESTAURANTS_QUERY,
     {
@@ -39,11 +38,6 @@ export const MyRestaurants = () => {
     }
   );
   console.log(data);
-  useEffect(() => {
-    if (data?.myRestaurants.totalPages) {
-      setPageNav(data?.myRestaurants.totalPages);
-    }
-  }, []);
 
   const onNextPageClick = () => setPage((current) => current + 1);
   const onPrevPageClick = () => setPage((current) => current - 1);
@@ -65,7 +59,7 @@ export const MyRestaurants = () => {
             />
           ))}
         </div>
-        {pageNav > 1 && (
+        {data?.myRestaurants.totalPages && data.myRestaurants.totalPages > 1 ? (
           <div className="grid grid-cols-3 text-center max-w-md items-center mx-auto mt-10">
             {page > 1 ? (
               <button
@@ -91,6 +85,8 @@ export const MyRestaurants = () => {
               <div></div>
             )}
           </div>
+        ) : (
+          <div></div>
         )}
 
         {data?.myRestaurants.ok && data.myRestaurants.results?.length === 0 && (
