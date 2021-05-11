@@ -13,6 +13,7 @@ import {
   createAccountMutation,
   createAccountMutationVariables,
 } from "../__generated__/createAccountMutation";
+import { ErrorMessageForm } from "../components/errorMessageForm";
 
 const CREATE_ACCOUNT_MUTATION = gql`
   mutation createAccountMutation($createAccountInput: CreateAccountInput!) {
@@ -119,9 +120,11 @@ export const CreateAccount = () => {
             loading={false}
             actionText={"Create Account"}
           />
-          <span className="font-medium text-red-500 mb-4">
-            {createAccountMutationResult?.createAccount.error}
-          </span>
+          {createAccountMutationResult?.createAccount.error && (
+            <ErrorMessageForm
+              errorMessage={createAccountMutationResult?.createAccount.error}
+            />
+          )}
         </form>
         <div>
           Already have an account?

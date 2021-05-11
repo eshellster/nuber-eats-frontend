@@ -14,7 +14,6 @@ import { Button } from "../components/button";
 import { Link } from "react-router-dom";
 import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
-import { Input } from "../components/input";
 const LOGIN_MUTATION = gql`
   mutation loginMutation($loginInput: LoginInput!) {
     login(input: $loginInput) {
