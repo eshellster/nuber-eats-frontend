@@ -1,10 +1,10 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
 import { Button } from "../../components/button";
 import { ErrorMessageForm } from "../../components/errorMessageForm";
-import { RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   createRestaurant,
   createRestaurantVariables,
@@ -16,6 +16,7 @@ const CREATE_RESTAURANT_MUTATION = gql`
     createRestaurant(input: $input) {
       ok
       error
+      restaurantId
     }
   }
 `;
@@ -28,12 +29,50 @@ interface IFormProps {
 }
 
 export const AddRestaurant = () => {
+  const client = useApolloClient();
+  const history = useHistory();
+  const [imageUrl, setImageUrl] = useState("");
   const onCompleted = (data: createRestaurant) => {
     const {
-      createRestaurant: { ok, error },
+      createRestaurant: { ok, restaurantId },
     } = data;
     if (ok) {
+      const { name, categoryName, address } = getValues();
       setUploading(false);
+      const queryResult = client.readQuery({
+        query: MY_RESTAURANTS_QUERY,
+        variables: {
+          input: {
+            page: 1,
+            limit: 6,
+          },
+        },
+      });
+
+      client.writeQuery({
+        query: MY_RESTAURANTS_QUERY,
+        data: {
+          myRestaurants: {
+            ...queryResult.myRestaurants,
+            results: [
+              {
+                address,
+                category: {
+                  name: categoryName,
+                  __typename: "Category",
+                },
+                coverImg: imageUrl,
+                id: restaurantId,
+                isPromoted: false,
+                name,
+                __typename: "Restaurant",
+              },
+              ...queryResult.myRestaurants.results,
+            ],
+          },
+        },
+      });
+      history.push("/");
     }
   };
   const [createRestaurantMutation, { data }] = useMutation<
@@ -75,6 +114,7 @@ export const AddRestaurant = () => {
           body: formBody,
         })
       ).json();
+      setImageUrl(coverImg);
       createRestaurantMutation({
         variables: {
           input: {

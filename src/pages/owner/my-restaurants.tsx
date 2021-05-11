@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useApolloClient, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
@@ -37,10 +37,11 @@ export const MyRestaurants = () => {
       },
     }
   );
-  console.log(data);
+  // console.log(data);
 
   const onNextPageClick = () => setPage((current) => current + 1);
   const onPrevPageClick = () => setPage((current) => current - 1);
+
   return (
     <div>
       <Helmet>
