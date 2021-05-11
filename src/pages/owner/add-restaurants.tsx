@@ -4,10 +4,12 @@ import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Button } from "../../components/button";
 import { ErrorMessageForm } from "../../components/errorMessageForm";
+import { RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   createRestaurant,
   createRestaurantVariables,
 } from "../../__generated__/createRestaurant";
+import { MY_RESTAURANTS_QUERY } from "./my-restaurants";
 
 const CREATE_RESTAURANT_MUTATION = gql`
   mutation createRestaurant($input: CreateRestaurantInput!) {
@@ -37,7 +39,20 @@ export const AddRestaurant = () => {
   const [createRestaurantMutation, { data }] = useMutation<
     createRestaurant,
     createRestaurantVariables
-  >(CREATE_RESTAURANT_MUTATION, { onCompleted });
+  >(CREATE_RESTAURANT_MUTATION, {
+    onCompleted,
+    refetchQueries: [
+      {
+        query: MY_RESTAURANTS_QUERY,
+        variables: {
+          input: {
+            page: 1,
+            limit: 6,
+          },
+        },
+      },
+    ],
+  });
 
   const {
     register,
