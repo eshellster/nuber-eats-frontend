@@ -1,8 +1,8 @@
-import { gql, useApolloClient, useQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import { gql, useQuery } from "@apollo/client";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { Restaurant } from "../../components/restaurant";
+import { MyRestaurant } from "../../components/my-restaurant";
 import { RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   myRestaurants,
@@ -37,7 +37,7 @@ export const MyRestaurants = () => {
       },
     }
   );
-  // console.log(data);
+  console.log(data);
 
   const onNextPageClick = () => setPage((current) => current + 1);
   const onPrevPageClick = () => setPage((current) => current - 1);
@@ -51,7 +51,7 @@ export const MyRestaurants = () => {
         <h2 className="text-4xl font-medium mb-10">My Restaurants</h2>
         <div className="mt-10 grid md:grid-cols-3 gap-x-5 gap-y-5">
           {data?.myRestaurants.results?.map((restaurant) => (
-            <Restaurant
+            <MyRestaurant
               key={restaurant.id}
               id={restaurant.id + ""}
               coverImg={restaurant.coverImg + ""}

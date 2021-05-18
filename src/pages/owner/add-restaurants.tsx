@@ -32,19 +32,20 @@ export const AddRestaurant = () => {
   const client = useApolloClient();
   const history = useHistory();
   const [imageUrl, setImageUrl] = useState("");
-  const onCompleted = (data: createRestaurant) => {
+  const [limitListSize, setLimitListSize] = useState(6);
+  const onCompleted = async (data: createRestaurant) => {
     const {
       createRestaurant: { ok, restaurantId },
     } = data;
     if (ok) {
       const { name, categoryName, address } = getValues();
       setUploading(false);
-      const queryResult = client.readQuery({
+      const queryResult = await client.readQuery({
         query: MY_RESTAURANTS_QUERY,
         variables: {
           input: {
             page: 1,
-            limit: 6,
+            limit: limitListSize,
           },
         },
       });
@@ -86,7 +87,7 @@ export const AddRestaurant = () => {
         variables: {
           input: {
             page: 1,
-            limit: 6,
+            limit: limitListSize,
           },
         },
       },

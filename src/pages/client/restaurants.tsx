@@ -58,6 +58,8 @@ export const Restaurants = () => {
   const onPrevPageClick = () => setPage((current) => current - 1);
   const { register, handleSubmit, getValues } = useForm<IFormProps>();
   const history = useHistory();
+  console.log(Restaurants);
+
   const onSearchSubmit = () => {
     const { searchRestaurantTerm } = getValues();
     history.push({
