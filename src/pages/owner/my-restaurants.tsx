@@ -25,7 +25,7 @@ export const MY_RESTAURANTS_QUERY = gql`
 `;
 
 export const MyRestaurants = () => {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState<number>(1);
   const { data } = useQuery<myRestaurants, myRestaurantsVariables>(
     MY_RESTAURANTS_QUERY,
     {
@@ -37,7 +37,7 @@ export const MyRestaurants = () => {
       },
     }
   );
-  console.log(data);
+  // console.log(data);
 
   const onNextPageClick = () => setPage((current) => current + 1);
   const onPrevPageClick = () => setPage((current) => current - 1);

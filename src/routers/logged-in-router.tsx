@@ -12,6 +12,7 @@ import { MyRestaurants } from "../pages/owner/my-restaurants";
 import { NotFound } from "../pages/404";
 import { AddRestaurant } from "../pages/owner/add-restaurants";
 import { MyRestaurant } from "../pages/owner/my-restaurant";
+import { AddDish } from "../pages/owner/add-dish";
 
 const clientRoutes = [
   { path: "/", component: <Restaurants /> },
@@ -23,6 +24,7 @@ const commonRoutes = [
   { path: "/confirm", component: <ConfirmEmail /> },
   { path: "/edit-profile", component: <EditProfile /> },
   { path: "/restaurant/:id", component: <Restaurant /> },
+  { path: "/restaurant/:id/add-dish", component: <AddDish /> },
 ];
 
 const restaurantRoutes = [
@@ -57,7 +59,7 @@ export const LoggedInRouter = () => {
             </Route>
           ))}
         {commonRoutes.map((route) => (
-          <Route key={route.path} path={route.path}>
+          <Route exact key={route.path} path={route.path}>
             {route.component}
           </Route>
         ))}
