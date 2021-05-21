@@ -10,7 +10,7 @@ import { CategoryRestaurants } from "../pages/client/categoryRestaurants";
 import { Restaurant } from "../pages/client/restaurant";
 import { MyRestaurants } from "../pages/owner/my-restaurants";
 import { NotFound } from "../pages/404";
-import { AddRestaurant } from "../pages/owner/add-restaurants";
+import { AddRestaurant } from "../pages/owner/add-restaurant";
 import { MyRestaurant } from "../pages/owner/my-restaurant";
 import { AddDish } from "../pages/owner/add-dish";
 
@@ -24,7 +24,7 @@ const commonRoutes = [
   { path: "/confirm", component: <ConfirmEmail /> },
   { path: "/edit-profile", component: <EditProfile /> },
   { path: "/restaurant/:id", component: <Restaurant /> },
-  { path: "/restaurant/:id/add-dish", component: <AddDish /> },
+  { path: "/restaurant/:restaurantId/add-dish", component: <AddDish /> },
 ];
 
 const restaurantRoutes = [

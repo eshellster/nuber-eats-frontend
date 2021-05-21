@@ -33,14 +33,14 @@ export const AddRestaurant = () => {
   const history = useHistory();
   const [imageUrl, setImageUrl] = useState("");
   const [limitListSize, setLimitListSize] = useState(6);
-  const onCompleted = async (data: createRestaurant) => {
+  const onCompleted = (data: createRestaurant) => {
     const {
       createRestaurant: { ok, restaurantId },
     } = data;
     if (ok) {
       const { name, categoryName, address } = getValues();
       setUploading(false);
-      const queryResult = await client.readQuery({
+      const queryResult = client.readQuery({
         query: MY_RESTAURANTS_QUERY,
         variables: {
           input: {
@@ -49,6 +49,7 @@ export const AddRestaurant = () => {
           },
         },
       });
+      console.log("queryResult : ", queryResult);
 
       client.writeQuery({
         query: MY_RESTAURANTS_QUERY,
