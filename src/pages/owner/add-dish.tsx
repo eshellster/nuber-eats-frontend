@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
-import React from "react";
+import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
 import { Button } from "../../components/button";
 import {
@@ -26,6 +26,7 @@ interface IForm {
   name: string;
   price: string;
   description: string;
+  option: { optionName: string; optionPrice: number }[];
 }
 
 export const AddDish = () => {
@@ -46,22 +47,35 @@ export const AddDish = () => {
       },
     ],
   });
-  const { register, handleSubmit, formState, getValues } = useForm<IForm>({
+  const { register, handleSubmit, formState, getValues, control } = useForm<
+    IForm
+  >({
     mode: "onChange",
   });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "option",
+  });
   const onSubmit = () => {
-    const { name, price, description } = getValues();
-    createDishMutation({
-      variables: {
-        input: {
-          name,
-          price: +price,
-          description,
-          restaurantId: +restaurantId,
-        },
-      },
-    });
-    history.goBack();
+    const { name, price, description, ...options } = getValues();
+    console.log(options);
+
+    // createDishMutation({
+    //   variables: {
+    //     input: {
+    //       name,
+    //       price: +price,
+    //       description,
+    //       restaurantId: +restaurantId,
+    //     },
+    //   },
+    // });
+    // history.goBack();
+  };
+
+  const [optionNumber, setOptionNumber] = useState(0);
+  const onAddOpotionClick = () => {
+    setOptionNumber((current) => current + 1);
   };
   return (
     <div className="container flex flex-col items-center mt-52">
@@ -95,6 +109,36 @@ export const AddDish = () => {
           name="description"
           placeholder="Description"
         />
+        <div className="my-10">
+          <h4 className="font-medium mb-3 text-g">Dish Options</h4>
+          <span
+            onClick={onAddOpotionClick}
+            className=" cursor-pointer text-white bg-gray-900 py-1 px-2 mt-5"
+          >
+            Add Dish Option
+          </span>
+          {optionNumber !== 0 &&
+            Array.from(new Array(optionNumber)).map((_, index) => (
+              <div key={index} className="mt-5">
+                <input
+                  className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
+                  {...register(`option.${index}.optionName` as const, {
+                    required: "Description is required.",
+                  })}
+                  type="text"
+                  placeholder="Option Name"
+                />
+                <input
+                  className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
+                  {...register(`option.${index}.optionPrice` as const, {
+                    required: "Description is required.",
+                  })}
+                  type="number"
+                  placeholder="Option Price"
+                />
+              </div>
+            ))}
+        </div>
         <Button
           loading={loading}
           canClick={formState.isValid}
