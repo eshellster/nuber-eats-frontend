@@ -50,12 +50,14 @@ export const AddDish = () => {
   const { register, handleSubmit, formState, getValues, control } = useForm<
     IForm
   >({
-    mode: "onChange",
+    mode: "onBlur",
   });
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "option",
-  });
+  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
+    {
+      control,
+      name: "option",
+    }
+  );
   const onSubmit = () => {
     const { name, price, description, ...options } = getValues();
     console.log(options);
@@ -111,33 +113,39 @@ export const AddDish = () => {
         />
         <div className="my-10">
           <h4 className="font-medium mb-3 text-g">Dish Options</h4>
-          <span
-            onClick={onAddOpotionClick}
+          <button
+            onClick={() => append({ optionName: "", optionPrice: 0 })}
             className=" cursor-pointer text-white bg-gray-900 py-1 px-2 mt-5"
           >
             Add Dish Option
-          </span>
-          {optionNumber !== 0 &&
-            Array.from(new Array(optionNumber)).map((_, index) => (
-              <div key={index} className="mt-5">
-                <input
-                  className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
-                  {...register(`option.${index}.optionName` as const, {
-                    required: "Description is required.",
-                  })}
-                  type="text"
-                  placeholder="Option Name"
-                />
-                <input
-                  className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
-                  {...register(`option.${index}.optionPrice` as const, {
-                    required: "Description is required.",
-                  })}
-                  type="number"
-                  placeholder="Option Price"
-                />
-              </div>
-            ))}
+          </button>
+          {fields.map((field, index) => (
+            <div key={field.id} className="mt-5">
+              <input
+                className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
+                {...register(`option.${index}.optionName` as const, {
+                  required: "Description is required.",
+                })}
+                type="text"
+                placeholder="Option Name"
+              />
+              <input
+                className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
+                {...register(`option.${index}.optionPrice` as const, {
+                  required: "Description is required.",
+                })}
+                type="number"
+                placeholder="Option Price"
+              />
+              <button
+                className="w-6 h-6 rounded-full bg-red-600 text-white font-mono"
+                type="button"
+                onClick={() => remove(index)}
+              >
+                &#8212;
+              </button>
+            </div>
+          ))}
         </div>
         <Button
           loading={loading}
