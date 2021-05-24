@@ -59,26 +59,28 @@ export const AddDish = () => {
     }
   );
   const onSubmit = () => {
-    const { name, price, description, ...options } = getValues();
+    const { name, price, description, ...rest } = getValues();
+    console.log(rest);
+    const options = rest.option.map((dishOption) => ({
+      name: dishOption.optionName,
+      extra: +dishOption.optionPrice,
+    }));
     console.log(options);
 
-    // createDishMutation({
-    //   variables: {
-    //     input: {
-    //       name,
-    //       price: +price,
-    //       description,
-    //       restaurantId: +restaurantId,
-    //     },
-    //   },
-    // });
-    // history.goBack();
+    createDishMutation({
+      variables: {
+        input: {
+          name,
+          price: +price,
+          description,
+          restaurantId: +restaurantId,
+          options,
+        },
+      },
+    });
+    history.goBack();
   };
 
-  const [optionNumber, setOptionNumber] = useState(0);
-  const onAddOpotionClick = () => {
-    setOptionNumber((current) => current + 1);
-  };
   return (
     <div className="container flex flex-col items-center mt-52">
       <Helmet>
