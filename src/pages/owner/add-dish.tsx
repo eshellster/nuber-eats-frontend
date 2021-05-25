@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useState } from "react";
+import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
@@ -9,6 +9,7 @@ import {
   createDishVariables,
 } from "../../__generated__/createDish";
 import { MY_RESTAURANT_QUERY } from "./my-restaurant";
+import { OptionFields } from "./options-fieldArray";
 
 const CREATE_DISH_MUTATION = gql`
   mutation createDish($input: CreateDishInput!) {
@@ -22,11 +23,16 @@ interface IParams {
   restaurantId: string;
 }
 
+interface IChoice {
+  choiceName: string;
+  choicePrice: string;
+}
+
 interface IForm {
   name: string;
   price: string;
   description: string;
-  option: { optionName: string; optionPrice: number }[];
+  option: { optionName: string; optionPrice: number; choices: IChoice[] }[];
 }
 
 export const AddDish = () => {
@@ -47,25 +53,32 @@ export const AddDish = () => {
       },
     ],
   });
-  const { register, handleSubmit, formState, getValues, control } = useForm<
-    IForm
-  >({
+  const {
+    register,
+    handleSubmit,
+    formState,
+    setValue,
+    getValues,
+    control,
+  } = useForm<IForm>({
     mode: "onBlur",
   });
-  const { fields, append, prepend, remove, swap, move, insert } = useFieldArray(
-    {
-      control,
-      name: "option",
-    }
-  );
+  const options = useFieldArray({
+    control,
+    name: "option",
+  });
+
   const onSubmit = () => {
     const { name, price, description, ...rest } = getValues();
-    console.log(rest);
     const options = rest.option.map((dishOption) => ({
       name: dishOption.optionName,
       extra: +dishOption.optionPrice,
+      choices: dishOption.choices.map((choice) => ({
+        name: choice.choiceName,
+        extra: +choice.choicePrice,
+      })),
     }));
-    console.log(options);
+    // console.log(options);
 
     createDishMutation({
       variables: {
@@ -115,39 +128,7 @@ export const AddDish = () => {
         />
         <div className="my-10">
           <h4 className="font-medium mb-3 text-g">Dish Options</h4>
-          <button
-            onClick={() => append({ optionName: "", optionPrice: 0 })}
-            className=" cursor-pointer text-white bg-gray-900 py-1 px-2 mt-5"
-          >
-            Add Dish Option
-          </button>
-          {fields.map((field, index) => (
-            <div key={field.id} className="mt-5">
-              <input
-                className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
-                {...register(`option.${index}.optionName` as const, {
-                  required: "Description is required.",
-                })}
-                type="text"
-                placeholder="Option Name"
-              />
-              <input
-                className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
-                {...register(`option.${index}.optionPrice` as const, {
-                  required: "Description is required.",
-                })}
-                type="number"
-                placeholder="Option Price"
-              />
-              <button
-                className="w-6 h-6 rounded-full bg-red-600 text-white font-mono"
-                type="button"
-                onClick={() => remove(index)}
-              >
-                &#8212;
-              </button>
-            </div>
-          ))}
+          <OptionFields control={control} register={register} />
         </div>
         <Button
           loading={loading}
