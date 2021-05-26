@@ -1,8 +1,10 @@
+import { useApolloClient } from "@apollo/client";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Link } from "react-router-dom";
-import { isLoggedInVar } from "../apollo";
+import { authTokenVar, isLoggedInVar } from "../apollo";
+import { LOCALSTORAGE_TOKEN } from "../constants";
 import { useMe } from "../hooks/useMe";
 import nuberLogo from "../images/logo.svg";
 
@@ -11,6 +13,7 @@ interface IHeaderProps {
 }
 
 export const Header: React.FC<IHeaderProps> = ({ email }) => {
+  const client = useApolloClient();
   const { data } = useMe();
   return (
     <>
@@ -31,7 +34,17 @@ export const Header: React.FC<IHeaderProps> = ({ email }) => {
             </Link>
           </span>
           <span className="text-xs">{email}</span>
-          <button onClick={() => isLoggedInVar(false)}>Log Out</button>
+          {isLoggedInVar && (
+            <button
+              onClick={() => {
+                authTokenVar("");
+                isLoggedInVar(false);
+                localStorage.setItem(LOCALSTORAGE_TOKEN, "");
+              }}
+            >
+              Log Out
+            </button>
+          )}
         </div>
       </header>
     </>
