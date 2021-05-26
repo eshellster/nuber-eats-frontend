@@ -1,4 +1,3 @@
-import { useApolloClient } from "@apollo/client";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
@@ -13,7 +12,6 @@ interface IHeaderProps {
 }
 
 export const Header: React.FC<IHeaderProps> = ({ email }) => {
-  const client = useApolloClient();
   const { data } = useMe();
   return (
     <>
