@@ -51,6 +51,16 @@ export interface DishOptionInputType {
   extra?: number | null;
 }
 
+export interface EditDishInput {
+  name?: string | null;
+  price?: number | null;
+  soldOut?: boolean | null;
+  invisible?: boolean | null;
+  description?: string | null;
+  options?: DishOptionInputType[] | null;
+  dishId: number;
+}
+
 export interface EditProfileInput {
   email?: string | null;
   password?: string | null;

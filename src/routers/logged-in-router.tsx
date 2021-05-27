@@ -13,6 +13,7 @@ import { NotFound } from "../pages/404";
 import { AddRestaurant } from "../pages/owner/add-restaurant";
 import { MyRestaurant } from "../pages/owner/my-restaurant";
 import { AddDish } from "../pages/owner/add-dish";
+import { EditDish } from "../pages/owner/edit-dish";
 
 const clientRoutes = [
   { path: "/", component: <Restaurants /> },
@@ -31,6 +32,7 @@ const restaurantRoutes = [
   { path: "/", component: <MyRestaurants /> },
   { path: "/add-restaurant", component: <AddRestaurant /> },
   { path: "/my-restaurant/:id", component: <MyRestaurant /> },
+  { path: "/edit-dish/:id", component: <EditDish /> },
 ];
 
 export const LoggedInRouter = () => {

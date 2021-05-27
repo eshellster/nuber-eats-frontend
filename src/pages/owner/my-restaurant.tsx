@@ -70,7 +70,7 @@ export const MyRestaurant = () => {
               </h6>
             </div>
           </header>
-          <div className="container m-10 ">
+          <div className="container p-10 ">
             <Link
               to={`/restaurant/${id}/add-dish`}
               className=" mr-8 text-white bg-gray-800 py-3 px-10"
@@ -85,11 +85,13 @@ export const MyRestaurant = () => {
                 <h4 className="text-xl mb-5">Please upload a dish!</h4>
               ) : (
                 <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
-                  {data?.myRestaurant.restaurant?.menu.map((dish) => (
+                  {data?.myRestaurant.restaurant?.menu.map((dish, index) => (
                     <Dish
+                      key={index}
                       name={dish.name}
                       description={dish.description || ""}
                       price={dish.price}
+                      options={dish.options}
                     />
                   ))}
                 </div>

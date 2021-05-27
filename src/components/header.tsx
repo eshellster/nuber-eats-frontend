@@ -1,8 +1,9 @@
+import { ApolloClient, useApolloClient } from "@apollo/client";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { Link } from "react-router-dom";
-import { authTokenVar, isLoggedInVar } from "../apollo";
+import { authTokenVar, client, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 import { useMe } from "../hooks/useMe";
 import nuberLogo from "../images/logo.svg";
@@ -13,6 +14,7 @@ interface IHeaderProps {
 
 export const Header: React.FC<IHeaderProps> = ({ email }) => {
   const { data } = useMe();
+  const client = useApolloClient();
   return (
     <>
       {!data?.me.verified && (
@@ -38,6 +40,7 @@ export const Header: React.FC<IHeaderProps> = ({ email }) => {
                 authTokenVar("");
                 isLoggedInVar(false);
                 localStorage.setItem(LOCALSTORAGE_TOKEN, "");
+                client.clearStore();
               }}
             >
               Log Out
