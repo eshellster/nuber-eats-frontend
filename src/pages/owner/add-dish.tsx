@@ -53,17 +53,12 @@ export const AddDish = () => {
       },
     ],
   });
-  const {
-    register,
-    handleSubmit,
-    formState,
-    setValue,
-    getValues,
-    control,
-  } = useForm<IForm>({
+  const { register, handleSubmit, formState, getValues, control } = useForm<
+    IForm
+  >({
     mode: "onBlur",
   });
-  const options = useFieldArray({
+  useFieldArray({
     control,
     name: "option",
   });

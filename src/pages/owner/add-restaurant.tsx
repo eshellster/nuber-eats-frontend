@@ -32,7 +32,7 @@ export const AddRestaurant = () => {
   const client = useApolloClient();
   const history = useHistory();
   const [imageUrl, setImageUrl] = useState("");
-  const [limitListSize, setLimitListSize] = useState(6);
+  const [limitListSize] = useState(6);
   const onCompleted = (data: createRestaurant) => {
     const {
       createRestaurant: { ok, restaurantId },
@@ -99,7 +99,7 @@ export const AddRestaurant = () => {
     register,
     getValues,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<IFormProps>({ mode: "onChange" });
 
   const [uploading, setUploading] = useState(false);
