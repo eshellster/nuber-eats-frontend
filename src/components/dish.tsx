@@ -1,41 +1,36 @@
 import React from "react";
-import { Link, useParams } from "react-router-dom";
-import { myRestaurant_myRestaurant_restaurant_menu_options } from "../__generated__/myRestaurant";
+import { useHistory, useParams } from "react-router-dom";
+import { DishParts } from "../__generated__/DishParts";
 
 interface IDishProps {
-  description: string;
-  name: string;
-  price: number;
-  options?: myRestaurant_myRestaurant_restaurant_menu_options[] | null;
+  dish: DishParts;
 }
 
 interface IParams {
   id: string;
 }
 
-export const Dish: React.FC<IDishProps> = ({
-  description,
-  name,
-  price,
-  options,
-}) => {
+export const Dish: React.FC<IDishProps> = ({ dish }) => {
+  const history = useHistory();
   const { id } = useParams<IParams>();
   return (
-    <Link
-      to={`/edit-dish/:${id}`}
+    <div
+      onClick={() => {
+        history.push({ pathname: "/edit-dish/" + id, state: { dish } });
+      }}
       className=" px-8 py-4 border-2 border-gray-500 cursor-pointer hover:border-gray-800 transition-all "
     >
       <div className="mb-5 ">
         <div className="grid grid-cols-2">
-          <h3 className="text-xl font-medium ">{name}</h3>
-          <div className="text-right">{price}₩</div>
+          <h3 className="text-xl font-medium ">{dish.name}</h3>
+          <div className="text-right">{dish.price}₩</div>
         </div>
 
-        <h4 className="font-sans text-sm text-gray-500">{description}</h4>
+        <h4 className="font-sans text-sm text-gray-500">{dish.description}</h4>
       </div>
 
-      {options?.map((option) => (
-        <div className="text-sm">
+      {dish.options?.map((option, index) => (
+        <div key={index} className="text-sm">
           <div className="grid grid-cols-2">
             <div>{option.name}</div>
             {option.extra && option.extra > 0 ? (
@@ -43,8 +38,8 @@ export const Dish: React.FC<IDishProps> = ({
             ) : null}
           </div>
           <div className="ml-5">
-            {option.choices?.map((choice) => (
-              <div className="grid grid-cols-2">
+            {option.choices?.map((choice, index) => (
+              <div key={index} className="grid grid-cols-2">
                 <div>{choice.name}</div>
                 {choice.extra && choice.extra > 0 ? (
                   <div className="text-right">+ {choice.extra}₩</div>
@@ -54,6 +49,6 @@ export const Dish: React.FC<IDishProps> = ({
           </div>
         </div>
       ))}
-    </Link>
+    </div>
   );
 };
