@@ -32,7 +32,7 @@ interface IForm {
   name: string;
   price: string;
   description: string;
-  option: { optionName: string; optionPrice: number; choices: IChoice[] }[];
+  options: { optionName: string; optionPrice: number; choices: IChoice[] }[];
 }
 
 export const AddDish = () => {
@@ -60,12 +60,12 @@ export const AddDish = () => {
   });
   useFieldArray({
     control,
-    name: "option",
+    name: "options",
   });
 
   const onSubmit = () => {
-    const { name, price, description, ...rest } = getValues();
-    const options = rest.option.map((dishOption) => ({
+    const { name, price, description, options } = getValues();
+    const dish_options = options.map((dishOption) => ({
       name: dishOption.optionName,
       extra: +dishOption.optionPrice,
       choices: dishOption.choices.map((choice) => ({
@@ -73,7 +73,7 @@ export const AddDish = () => {
         extra: +choice.choicePrice,
       })),
     }));
-    // console.log(options);
+    console.log(options);
 
     createDishMutation({
       variables: {
@@ -82,7 +82,7 @@ export const AddDish = () => {
           price: +price,
           description,
           restaurantId: +restaurantId,
-          options,
+          options: dish_options,
         },
       },
     });
