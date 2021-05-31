@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useFieldArray } from "react-hook-form";
 import { EditChoicesNestedFieldArray } from "./edit-choices-nestedFieldArray";
 
@@ -13,26 +13,26 @@ export const EditOptionFields: React.FC<IOptionFieldsProps> = ({
 }) => {
   const { append, fields, remove } = useFieldArray({
     control,
-    name: "option",
+    name: "options",
   });
 
-  useEffect(() => {
-    const dishOptions = control.defaultValuesRef.current.options;
-    if (dishOptions)
-      if (dishOptions.length > 0)
-        append(
-          dishOptions.map((option: any) => ({
-            optionName: option.name,
-            optionPrice: option.extra | 0,
-          }))
-        );
-  }, []);
+  // useEffect(() => {
+  //   const dishOptions = control.defaultValuesRef.current.options;
+  //   if (dishOptions)
+  //     if (dishOptions.length > 0)
+  //       append(
+  //         dishOptions.map((option: any) => ({
+  //           name: option.name,
+  //           extra: option.extra | 0,
+  //         }))
+  //       );
+  // }, []);
 
   return (
     <>
       <div>
         <button
-          onClick={() => append({ optionName: "", optionPrice: 0 })}
+          onClick={() => append({ name: "", extra: 0 })}
           className=" cursor-pointer text-white bg-gray-900 py-1 px-2 mt-5"
         >
           Edit Dish Option
@@ -42,7 +42,7 @@ export const EditOptionFields: React.FC<IOptionFieldsProps> = ({
             <div className="mt-5">
               <input
                 className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
-                {...register(`option.${index}.optionName` as const, {
+                {...register(`options.${index}.name` as const, {
                   required: "Description is required.",
                 })}
                 type="text"
@@ -50,9 +50,7 @@ export const EditOptionFields: React.FC<IOptionFieldsProps> = ({
               />
               <input
                 className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
-                {...register(`option.${index}.optionPrice` as const, {
-                  required: "Description is required.",
-                })}
+                {...register(`options.${index}.extra` as const)}
                 type="number"
                 placeholder="Option Price"
               />

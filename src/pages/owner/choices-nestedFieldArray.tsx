@@ -14,7 +14,7 @@ export const ChoicesNestedFieldArray: React.FC<IChoicesProp> = ({
 }) => {
   const { fields, remove, append } = useFieldArray({
     control,
-    name: `option[${nestIndex}].choices`,
+    name: `options[${nestIndex}].choices`,
   });
   return (
     <div className="ml-10">
@@ -29,7 +29,7 @@ export const ChoicesNestedFieldArray: React.FC<IChoicesProp> = ({
           <input
             className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
             {...register(
-              `option[${nestIndex}].choices.${index}.choiceName` as const,
+              `options[${nestIndex}].choices.${index}.choiceName` as const,
               {
                 required: "Description is required.",
               }
@@ -40,7 +40,7 @@ export const ChoicesNestedFieldArray: React.FC<IChoicesProp> = ({
           <input
             className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
             {...register(
-              `option[${nestIndex}].choices.${index}.choicePrice` as const,
+              `options[${nestIndex}].choices.${index}.choicePrice` as const,
               {
                 required: "Description is required.",
               }

@@ -33,6 +33,8 @@ export interface myRestaurant_myRestaurant_restaurant_menu {
   name: string;
   price: number;
   photo: string | null;
+  soldOut: boolean;
+  invisible: boolean;
   description: string | null;
   options: myRestaurant_myRestaurant_restaurant_menu_options[] | null;
 }

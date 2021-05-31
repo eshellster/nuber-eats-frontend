@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useFieldArray } from "react-hook-form";
 
 interface IChoicesProp {
@@ -14,34 +14,13 @@ export const EditChoicesNestedFieldArray: React.FC<IChoicesProp> = ({
 }) => {
   const { fields, remove, append } = useFieldArray({
     control,
-    name: `option[${nestIndex}].choices`,
+    name: `options[${nestIndex}].choices`,
   });
-
-  console.log(control);
-
-  const {
-    defaultValuesRef: {
-      current: { options },
-    },
-  } = control;
-
-  useEffect(() => {
-    if (options.length > 0)
-      if (options[nestIndex].choices.length > 0) {
-        const optionChoices = options[nestIndex].choices;
-        append(
-          optionChoices.map((choice: any) => ({
-            choiceName: choice.name,
-            choicePrice: choice.extra,
-          }))
-        );
-      }
-  }, []);
 
   return (
     <div className="ml-10">
       <button
-        onClick={() => append({ choiceName: "", choicePrice: 0 })}
+        onClick={() => append({ name: "", extra: 0 })}
         className=" cursor-pointer text-white bg-gray-900 py-1 px-2 mt-5"
       >
         Add Option Choice
@@ -51,7 +30,7 @@ export const EditChoicesNestedFieldArray: React.FC<IChoicesProp> = ({
           <input
             className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
             {...register(
-              `option[${nestIndex}].choices.${index}.choiceName` as const,
+              `options[${nestIndex}].choices.${index}.name` as const,
               {
                 required: "Description is required.",
               }
@@ -62,10 +41,7 @@ export const EditChoicesNestedFieldArray: React.FC<IChoicesProp> = ({
           <input
             className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
             {...register(
-              `option[${nestIndex}].choices.${index}.choicePrice` as const,
-              {
-                required: "Description is required.",
-              }
+              `options[${nestIndex}].choices.${index}.extra` as const
             )}
             type="number"
             placeholder="Choice Price"

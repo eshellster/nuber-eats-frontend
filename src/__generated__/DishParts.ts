@@ -26,6 +26,8 @@ export interface DishParts {
   name: string;
   price: number;
   photo: string | null;
+  soldOut: boolean;
+  invisible: boolean;
   description: string | null;
   options: DishParts_options[] | null;
 }

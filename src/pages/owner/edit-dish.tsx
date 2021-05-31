@@ -2,18 +2,35 @@ import { gql, useMutation } from "@apollo/client";
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Button } from "../../components/button";
-import { DishParts } from "../../__generated__/DishParts";
 import { editDishVariables } from "../../__generated__/editDish";
-import { EditDishInput } from "../../__generated__/globalTypes";
+import {
+  DishOptionInputType,
+  EditDishInput,
+} from "../../__generated__/globalTypes";
 import { EditOptionFields } from "./edit-options-fieldArray";
 
 interface LocationState {
-  dish: DishParts;
+  dish: EditDishInput;
 }
 
+interface IForm {
+  dishId: number;
+  soldOut: boolean;
+  invisible: boolean;
+  name: string;
+  price: number;
+  description: string;
+  options: DishOptionInputType[];
+}
+
+interface IParamProps {
+  id: string;
+}
 export const EditDish: React.FC = () => {
+  const { id } = useParams<IParamProps>();
+  const history = useHistory();
   const {
     state: { dish },
   } = useLocation<LocationState>();
@@ -37,16 +54,15 @@ export const EditDish: React.FC = () => {
     handleSubmit,
     control,
     formState: { isValid },
-  } = useForm({
+  } = useForm<IForm>({
     mode: "onChange",
     defaultValues: {
-      dishId: dish.id,
-      name: dish.name,
-      price: dish.price,
-      soldOut: false,
-      invisible: false,
-      description: dish.description,
-      options: dish.options,
+      ...(dish.name && { name: dish.name }),
+      ...(dish.price && { price: dish.price }),
+      ...(dish.soldOut && { soldOut: dish.soldOut }),
+      ...(dish.invisible && { invisible: dish.invisible }),
+      ...(dish.description && { description: dish.description }),
+      ...(dish.options && { options: dish.options }),
     },
   });
 
@@ -57,7 +73,6 @@ export const EditDish: React.FC = () => {
 
   const onSubmit = () => {
     const {
-      dishId,
       name,
       price,
       soldOut,
@@ -65,19 +80,41 @@ export const EditDish: React.FC = () => {
       description,
       options,
     } = getValues();
+
+    const org_options = dish.options?.map((dishOption) => ({
+      name: dishOption.name,
+      extra: dishOption.extra,
+      choices: dishOption.choices?.map((choice) => ({
+        name: choice.name,
+        extra: choice.extra ? +choice.extra : null,
+      })),
+    }));
+
+    const dish_options = options.map((dishOption) => ({
+      name: dishOption.name,
+      extra: dishOption.extra,
+      choices: dishOption.choices?.map((choice) => ({
+        name: choice.name,
+        extra: choice.extra ? +choice.extra : null,
+      })),
+    }));
+
     editDish({
       variables: {
         editDishInput: {
-          dishId,
-          name,
-          price,
-          soldOut,
-          invisible,
-          description,
-          options,
+          dishId: +id,
+          ...(name !== dish.name && { name }),
+          ...(price !== dish.price && { price: +price }),
+          ...(soldOut !== dish.soldOut && { soldOut }),
+          ...(invisible !== dish.invisible && { invisible }),
+          ...(description !== dish.description && { description }),
+          ...(JSON.stringify(org_options) !== JSON.stringify(options) && {
+            options: dish_options,
+          }),
         },
       },
     });
+    history.goBack();
   };
 
   return (
@@ -115,6 +152,7 @@ export const EditDish: React.FC = () => {
           {...register("price")}
           className="input"
           type="number"
+          min={0}
           placeholder="price"
         />
         <div className="my-10">

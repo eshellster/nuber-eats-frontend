@@ -18,6 +18,8 @@ export const DISH_FRAGMENT = gql`
     name
     price
     photo
+    soldOut
+    invisible
     description
     options {
       name

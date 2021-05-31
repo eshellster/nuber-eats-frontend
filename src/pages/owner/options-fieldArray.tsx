@@ -13,7 +13,7 @@ export const OptionFields: React.FC<IOptionFieldsProps> = ({
 }) => {
   const { append, fields, remove } = useFieldArray({
     control,
-    name: "option",
+    name: "options",
   });
 
   return (
@@ -30,7 +30,7 @@ export const OptionFields: React.FC<IOptionFieldsProps> = ({
             <div className="mt-5">
               <input
                 className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
-                {...register(`option.${index}.optionName` as const, {
+                {...register(`options.${index}.optionName` as const, {
                   required: "Description is required.",
                 })}
                 type="text"
@@ -38,7 +38,7 @@ export const OptionFields: React.FC<IOptionFieldsProps> = ({
               />
               <input
                 className="py-2 px-4 focus:outline-none mr-3 focus:border-gray-600 border-2"
-                {...register(`option.${index}.optionPrice` as const, {
+                {...register(`options.${index}.optionPrice` as const, {
                   required: "Description is required.",
                 })}
                 type="number"
