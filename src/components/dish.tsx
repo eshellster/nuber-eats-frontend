@@ -1,24 +1,23 @@
 import React from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { DishParts } from "../__generated__/DishParts";
 
 interface IDishProps {
   dish: DishParts;
+  restaurantId: number;
 }
 
-interface IParams {
-  id: string;
-}
-
-export const Dish: React.FC<IDishProps> = ({ dish }) => {
+export const Dish: React.FC<IDishProps> = ({ dish, restaurantId }) => {
   const history = useHistory();
-  const { id } = useParams<IParams>();
   return (
     <div
       onClick={() => {
-        history.push({ pathname: "/edit-dish/" + id, state: { dish } });
+        history.push({
+          pathname: "/edit-dish/" + dish.id,
+          state: { dish, restaurantId },
+        });
       }}
-      className=" px-8 py-4 border-2 border-gray-500 cursor-pointer hover:border-gray-800 transition-all "
+      className="px-8 py-4 border-2 border-gray-500 cursor-pointer hover:border-gray-800 transition-all"
     >
       <div className="mb-5 ">
         <div className="grid grid-cols-2">

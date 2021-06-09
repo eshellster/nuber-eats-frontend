@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useParams } from "react-router-dom";
 import { Dish } from "../../components/dish";
@@ -42,7 +42,24 @@ export const MyRestaurant = () => {
       },
     }
   );
-  console.log(data);
+  // console.log(data);
+  // const [menu, setMenu] = useState(
+  //   data?.myRestaurant.restaurant?.menu?.sort(function (a, b) {
+  //     return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+  //   })
+  // );
+  // const [menu, setMenu] = useState(data?.myRestaurant.restaurant?.menu);
+
+  // useEffect(() => {
+  //   const menuSort = data?.myRestaurant.restaurant?.menu.map((menu) => menu);
+  //   setMenu(
+  //     menuSort?.sort(function (a, b) {
+  //       // 오름차순
+  //       return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+  //       // 광희, 명수, 재석, 형돈
+  //     })
+  //   );
+  // }, []);
 
   return (
     <div>
@@ -85,8 +102,8 @@ export const MyRestaurant = () => {
                 <h4 className="text-xl mb-5">Please upload a dish!</h4>
               ) : (
                 <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
-                  {data?.myRestaurant.restaurant?.menu.map((dish, index) => (
-                    <Dish dish={dish} key={index} />
+                  {data?.myRestaurant.restaurant?.menu?.map((dish, index) => (
+                    <Dish dish={dish} restaurantId={+id} key={index} />
                   ))}
                 </div>
               )}

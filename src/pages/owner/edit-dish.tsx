@@ -10,9 +10,11 @@ import {
   EditDishInput,
 } from "../../__generated__/globalTypes";
 import { EditOptionFields } from "./edit-options-fieldArray";
+import { MY_RESTAURANT_QUERY } from "./my-restaurant";
 
 interface LocationState {
   dish: EditDishInput;
+  restaurantId: number;
 }
 
 interface IForm {
@@ -32,7 +34,7 @@ export const EditDish: React.FC = () => {
   const { id } = useParams<IParamProps>();
   const history = useHistory();
   const {
-    state: { dish },
+    state: { dish, restaurantId },
   } = useLocation<LocationState>();
 
   const EDIT_DISH_MUTATION = gql`
@@ -45,7 +47,19 @@ export const EditDish: React.FC = () => {
   `;
 
   const [editDish, { loading }] = useMutation<EditDishInput, editDishVariables>(
-    EDIT_DISH_MUTATION
+    EDIT_DISH_MUTATION,
+    {
+      refetchQueries: [
+        {
+          query: MY_RESTAURANT_QUERY,
+          variables: {
+            input: {
+              id: restaurantId,
+            },
+          },
+        },
+      ],
+    }
   );
 
   const {
@@ -55,7 +69,7 @@ export const EditDish: React.FC = () => {
     control,
     formState: { isValid },
   } = useForm<IForm>({
-    mode: "onChange",
+    mode: "onBlur",
     defaultValues: {
       ...(dish.name && { name: dish.name }),
       ...(dish.price && { price: dish.price }),
@@ -83,7 +97,7 @@ export const EditDish: React.FC = () => {
 
     const org_options = dish.options?.map((dishOption) => ({
       name: dishOption.name,
-      extra: dishOption.extra,
+      extra: dishOption.extra ? +dishOption.extra : null,
       choices: dishOption.choices?.map((choice) => ({
         name: choice.name,
         extra: choice.extra ? +choice.extra : null,
@@ -92,12 +106,16 @@ export const EditDish: React.FC = () => {
 
     const dish_options = options.map((dishOption) => ({
       name: dishOption.name,
-      extra: dishOption.extra,
+      extra: dishOption.extra ? +dishOption.extra : null,
       choices: dishOption.choices?.map((choice) => ({
         name: choice.name,
         extra: choice.extra ? +choice.extra : null,
       })),
     }));
+
+    console.log(JSON.stringify(org_options) === JSON.stringify(dish_options));
+
+    console.log("dish_options:", dish_options);
 
     editDish({
       variables: {
@@ -108,7 +126,7 @@ export const EditDish: React.FC = () => {
           ...(soldOut !== dish.soldOut && { soldOut }),
           ...(invisible !== dish.invisible && { invisible }),
           ...(description !== dish.description && { description }),
-          ...(JSON.stringify(org_options) !== JSON.stringify(options) && {
+          ...(JSON.stringify(org_options) !== JSON.stringify(dish_options) && {
             options: dish_options,
           }),
         },
@@ -154,6 +172,13 @@ export const EditDish: React.FC = () => {
           type="number"
           min={0}
           placeholder="price"
+        />
+        <input
+          {...register("description")}
+          className="input"
+          type="text"
+          min={0}
+          placeholder="description"
         />
         <div className="my-10">
           <h4 className="font-medium mb-3 text-g">Dish Options</h4>
