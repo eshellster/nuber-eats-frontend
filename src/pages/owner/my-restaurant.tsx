@@ -2,7 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useParams } from "react-router-dom";
-import { Dish } from "../../components/dish";
+import { DishRestaurant } from "../../components/dish-restaurant";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   myRestaurant,
@@ -103,7 +103,11 @@ export const MyRestaurant = () => {
               ) : (
                 <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
                   {data?.myRestaurant.restaurant?.menu?.map((dish, index) => (
-                    <Dish dish={dish} restaurantId={+id} key={index} />
+                    <DishRestaurant
+                      dish={dish}
+                      restaurantId={+id}
+                      key={index}
+                    />
                   ))}
                 </div>
               )}
