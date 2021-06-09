@@ -1,8 +1,11 @@
 import { gql, useQuery } from "@apollo/client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router";
-import { RESTAURANT_FRAGMENT } from "../../fragments";
+import { Link } from "react-router-dom";
+import { Dish } from "../../components/dish";
+import { DishOrder } from "../../components/dish-order";
+import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
   restaurantQuery,
   restaurantQueryVariables,
@@ -15,10 +18,14 @@ const RESTAURANT_QUERY = gql`
       ok
       restaurant {
         ...RestaurantParts
+        menu {
+          ...DishParts
+        }
       }
     }
   }
   ${RESTAURANT_FRAGMENT}
+  ${DISH_FRAGMENT}
 `;
 
 interface IParamProp {
@@ -37,7 +44,9 @@ export const Restaurant = () => {
       },
     }
   );
-
+  useEffect(() => {
+    console.log(data);
+  }, []);
   return (
     <div>
       <Helmet>
@@ -64,6 +73,19 @@ export const Restaurant = () => {
               </h6>
             </div>
           </header>
+          <div className="container p-10 ">
+            <div className="mt-10">
+              {data?.restaurant.restaurant?.menu.length === 0 ? (
+                <h4 className="text-xl mb-5">Please upload a dish!</h4>
+              ) : (
+                <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
+                  {data?.restaurant.restaurant?.menu?.map((dish, index) => (
+                    <DishOrder dish={dish} restaurantId={+id} key={index} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

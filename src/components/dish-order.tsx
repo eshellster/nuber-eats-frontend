@@ -7,7 +7,7 @@ interface IDishProps {
   restaurantId: number;
 }
 
-export const Dish: React.FC<IDishProps> = ({ dish, restaurantId }) => {
+export const DishOrder: React.FC<IDishProps> = ({ dish, restaurantId }) => {
   const history = useHistory();
   return (
     <div
