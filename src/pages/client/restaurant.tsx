@@ -1,9 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router";
-import { Link } from "react-router-dom";
-import { Dish } from "../../components/dish";
 import { DishOrder } from "../../components/dish-order";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
 import {
@@ -31,9 +29,60 @@ const RESTAURANT_QUERY = gql`
 interface IParamProp {
   id: string;
 }
+export interface IChoiceOrderedProps {
+  parentName: string;
+  name: string;
+  price?: number | null;
+  count: number;
+}
+export interface IOptionOrderedProps {
+  name: string;
+  price?: number | null;
+  count: number;
+  choices?: IChoiceOrderedProps[];
+}
+
+export enum Role {
+  dish = "dish",
+  option = "option",
+  choice = "choice",
+}
+export interface IDishOrderedProps {
+  dishId: number;
+  name: string;
+  description: string;
+  price?: number | null;
+  role: Role;
+  count?: number;
+  options?: IOptionOrderedProps[];
+}
 
 export const Restaurant = () => {
   const { id } = useParams<IParamProp>();
+  const [orders, setOrders] = useState<IDishOrderedProps[]>([]);
+
+  const onCompleted = (data: restaurantQuery) => {
+    const menus = data?.restaurant.restaurant?.menu.map((dish) => ({
+      dishId: dish.id,
+      name: dish.name,
+      description: dish.description || "",
+      price: dish.price,
+      role: Role.dish,
+      count: 0,
+      options: dish.options?.map((option) => ({
+        name: option.name,
+        price: option.extra,
+        count: 0,
+        choices: option.choices?.map((choice) => ({
+          parentName: option.name,
+          name: choice.name,
+          price: choice.extra,
+          count: 0,
+        })),
+      })),
+    }));
+    if (menus) setOrders(menus);
+  };
   const { loading, data } = useQuery<restaurantQuery, restaurantQueryVariables>(
     RESTAURANT_QUERY,
     {
@@ -42,15 +91,19 @@ export const Restaurant = () => {
           restaurantId: +id,
         },
       },
+      onCompleted,
     }
   );
+  const restaurant = data?.restaurant.restaurant;
+
   useEffect(() => {
-    console.log(data);
-  }, []);
+    // setOrders();
+    console.log(orders);
+  }, [orders]);
   return (
     <div>
       <Helmet>
-        <title>{data?.restaurant.restaurant?.name || ""} | Nuber eats</title>
+        <title>{restaurant?.name || ""} | Nuber eats</title>
       </Helmet>
       {data?.restaurant.error && <div>레스토랑이 없습니다.</div>}
       {!loading && (
@@ -58,30 +111,45 @@ export const Restaurant = () => {
           <header
             className="bg-gray-500 w-full py-24  bg-cover bg-center bg-"
             style={{
-              backgroundImage: `url(${data?.restaurant.restaurant?.coverImg})`,
+              backgroundImage: `url(${restaurant?.coverImg})`,
             }}
           >
             <div className="bg-white max-w-sm py-8 pl-48">
-              <h4 className="text-4xl mb-3">
-                {data?.restaurant.restaurant?.name}
-              </h4>
+              <h4 className="text-4xl mb-3">{restaurant?.name}</h4>
               <h5 className="text-sm font-light mb-2">
-                {data?.restaurant.restaurant?.category?.name}
+                {restaurant?.category?.name}
               </h5>
-              <h6 className="text-sm font-light">
-                {data?.restaurant.restaurant?.address}
-              </h6>
+              <h6 className="text-sm font-light">{restaurant?.address}</h6>
             </div>
           </header>
           <div className="container p-10 ">
+            <div className="grid grid-cols-8">
+              <button className="col-span-1 py-3 px-4 bg-red-700 text-white font-bold">
+                전체주문 결제하기
+              </button>
+              <div className="grid grid-cols-3">
+                {/* {orders.map((order, index) => (
+                  <div key={index}>{order.dishId}</div>
+                ))} */}
+              </div>
+            </div>
             <div className="mt-10">
-              {data?.restaurant.restaurant?.menu.length === 0 ? (
+              {restaurant?.menu.length === 0 ? (
                 <h4 className="text-xl mb-5">Please upload a dish!</h4>
               ) : (
                 <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
-                  {data?.restaurant.restaurant?.menu?.map((dish, index) => (
-                    <DishOrder dish={dish} restaurantId={+id} key={index} />
-                  ))}
+                  {orders
+                    .sort(function (a, b) {
+                      return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+                    })
+                    .map((order, index) => (
+                      <DishOrder
+                        dish={order}
+                        key={index}
+                        orders={orders}
+                        setOrders={setOrders}
+                      />
+                    ))}
                 </div>
               )}
             </div>

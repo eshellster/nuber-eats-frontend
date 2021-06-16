@@ -15,6 +15,8 @@ module.exports = {
       zIndex: {
         "-1": "-1",
       },
+      outline: ["hover", "active"],
+      ring: ["hover", "active"],
     },
   },
   variants: {
