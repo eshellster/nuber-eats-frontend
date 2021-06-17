@@ -12,7 +12,7 @@ interface IDishOrderProps {
   setOrders: React.Dispatch<React.SetStateAction<IDishOrderedProps[]>>;
 }
 
-export interface IOrderCountProps {
+export interface IOrderCounterProps {
   dishID: number;
   parentName?: string;
   name: string;
@@ -21,7 +21,7 @@ export interface IOrderCountProps {
   orders: IDishOrderedProps[];
   setOrders: React.Dispatch<React.SetStateAction<IDishOrderedProps[]>>;
 }
-const OrderCount: React.FC<IOrderCountProps> = ({
+const OrderCounter: React.FC<IOrderCounterProps> = ({
   dishID: dishId,
   name,
   price,
@@ -30,7 +30,7 @@ const OrderCount: React.FC<IOrderCountProps> = ({
   setOrders,
   parentName,
 }) => {
-  const currCount = () => {
+  const getCountSize = () => {
     const dish = orders.find((dish) => dish.dishId === dishId);
     if (dish) {
       switch (role) {
@@ -38,6 +38,7 @@ const OrderCount: React.FC<IOrderCountProps> = ({
           return dish?.count;
 
         case Role.option:
+          if (!dish.count) return 0;
           const option = dish?.options?.filter(
             (option) => option.name === name
           )[0];
@@ -47,6 +48,7 @@ const OrderCount: React.FC<IOrderCountProps> = ({
           const choiceOption = dish?.options?.find(
             (option) => option.name === parentName
           );
+          if (!choiceOption?.count || !dish.count) return 0;
 
           const choice = choiceOption?.choices?.filter(
             (choice) => choice.name === name
@@ -89,6 +91,7 @@ const OrderCount: React.FC<IOrderCountProps> = ({
       return [];
     }
   };
+
   const setOrderSize = (input: number) => {
     const otherOrder = otherOrders(orders);
     if (role === Role.dish) {
@@ -141,20 +144,19 @@ const OrderCount: React.FC<IOrderCountProps> = ({
   };
 
   const addOrderSize = () => {
-    const currentSize = currCount();
+    const currentSize = getCountSize();
     if (currentSize) setOrderSize(currentSize + 1);
   };
   const subOrderSize = () => {
-    const currentSize = currCount();
+    const currentSize = getCountSize();
     if (currentSize) setOrderSize(currentSize - 1);
   };
   const toggleCheck = () => {
-    if (currCount()) {
+    if (getCountSize()) {
       setOrderSize(0);
-      console.log("setOrderSize:", 0);
+      // resetOrderChilden();
     } else {
       setOrderSize(1);
-      console.log("setOrderSize:", 1);
     }
     setChecked(!checked);
   };
@@ -174,7 +176,7 @@ const OrderCount: React.FC<IOrderCountProps> = ({
       <div className="text-sm flex flex-row items-center justify-end">
         <div
           className={`${
-            (!currCount() || !price) && "hidden"
+            (!getCountSize() || !price) && "hidden"
           } flex items-center`}
         >
           <button
@@ -183,8 +185,8 @@ const OrderCount: React.FC<IOrderCountProps> = ({
           >
             -
           </button>
-          <div className="w-10 h-5 text-center align-middle leading-5">
-            {currCount()}
+          <div className="w-5 h-5 text-center align-middle leading-5">
+            {getCountSize()}
           </div>
           <button
             onClick={addOrderSize}
@@ -194,7 +196,7 @@ const OrderCount: React.FC<IOrderCountProps> = ({
           </button>
         </div>
         <button className="ml-3 w-4 h-4 ring-1 " onClick={toggleCheck}>
-          {currCount() ? <span>&#10003;</span> : null}
+          {getCountSize() ? <span>&#10003;</span> : null}
         </button>
       </div>
     </div>
@@ -209,7 +211,7 @@ export const DishOrder: React.FC<IDishOrderProps> = ({
   return (
     <div className="px-4 py-4 border-2 border-gray-500 hover:border-gray-800 transition-all">
       <div className="text-2xl">
-        <OrderCount
+        <OrderCounter
           dishID={dish.dishId}
           name={dish.name}
           price={dish.price ? dish.price : 0}
@@ -229,7 +231,7 @@ export const DishOrder: React.FC<IDishOrderProps> = ({
         })
         .map((option, index) => (
           <div key={index} className="text-sm ml-5">
-            <OrderCount
+            <OrderCounter
               dishID={dish.dishId}
               name={option.name}
               price={option.price}
@@ -244,7 +246,7 @@ export const DishOrder: React.FC<IDishOrderProps> = ({
                 })
                 .map((choice, index) => (
                   <div key={index}>
-                    <OrderCount
+                    <OrderCounter
                       dishID={dish.dishId}
                       parentName={choice.parentName}
                       name={choice.name}

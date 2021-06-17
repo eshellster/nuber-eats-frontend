@@ -98,7 +98,6 @@ export const Restaurant = () => {
 
   useEffect(() => {
     // setOrders();
-    console.log(orders);
   }, [orders]);
   return (
     <div>
@@ -109,7 +108,7 @@ export const Restaurant = () => {
       {!loading && (
         <div>
           <header
-            className="bg-gray-500 w-full py-24  bg-cover bg-center bg-"
+            className="grid grid-cols-2 bg-gray-500 w-full py-24  bg-cover bg-center bg-"
             style={{
               backgroundImage: `url(${restaurant?.coverImg})`,
             }}
@@ -121,7 +120,55 @@ export const Restaurant = () => {
               </h5>
               <h6 className="text-sm font-light">{restaurant?.address}</h6>
             </div>
+            <div className="bg-white max-w-sm py-8 px-8">
+              <div className="w-96 grid grid-rows-1">
+                {orders
+                  .filter((dish) => dish.count)
+                  .map((dish) => (
+                    <div className="space-x-3">
+                      <span>{dish.name}</span>
+                      <span>가격:{dish.price}</span>
+                      <span>:{dish.count}</span>
+
+                      <span>
+                        금액:
+                        {dish.price && dish.count && dish.price * dish.count}
+                      </span>
+                      {dish.options
+                        ?.filter((option) => option.count)
+                        .map((option) => (
+                          <div className="text-sm ml-3">
+                            <span>{option.name}</span>
+                            {option.price && <span>{option.price}</span>}
+                            <span>:{option.count}</span>
+
+                            {option.price && option.count && (
+                              <span>금액:{option.price * option.count}</span>
+                            )}
+
+                            {option.choices
+                              ?.filter((choice) => choice.count)
+                              .map((choice) => (
+                                <div className="ml-3">
+                                  <span>{choice.name}</span>
+                                  {choice.price && <span>{choice.price}</span>}
+                                  <span>:{choice.count}</span>
+
+                                  {choice.price && choice.count && (
+                                    <span>
+                                      금액:{choice.price * choice.count}
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
+                          </div>
+                        ))}
+                    </div>
+                  ))}
+              </div>
+            </div>
           </header>
+
           <div className="container p-10 ">
             <div className="grid grid-cols-8">
               <button className="col-span-1 py-3 px-4 bg-red-700 text-white font-bold">
