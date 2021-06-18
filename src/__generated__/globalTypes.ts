@@ -33,6 +33,17 @@ export interface CreateDishInput {
   restaurantId: number;
 }
 
+export interface CreateOrderInput {
+  items: CreateOrderItemInput[];
+  restaurantId: number;
+}
+
+export interface CreateOrderItemInput {
+  dishId: number;
+  orderSize: number;
+  options?: OrderItemOptionInputType[] | null;
+}
+
 export interface CreateRestaurantInput {
   name: string;
   coverImg?: string | null;
@@ -78,6 +89,16 @@ export interface MyRestaurantInput {
 export interface MyRestaurantsInput {
   page?: number | null;
   limit: number;
+}
+
+export interface OrderChoiceInputType {
+  name: string;
+}
+
+export interface OrderItemOptionInputType {
+  name: string;
+  orderSize: number;
+  choices?: OrderChoiceInputType[] | null;
 }
 
 export interface RestaurantInput {

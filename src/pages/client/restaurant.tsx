@@ -1,29 +1,25 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { DishOrder } from "../../components/dish-order";
-import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
-import {
-  restaurantQuery,
-  restaurantQueryVariables,
-} from "../../__generated__/restaurantQuery";
+import { OrderList } from "../../components/orderList";
 
-const RESTAURANT_QUERY = gql`
-  query restaurantQuery($input: RestaurantInput!) {
-    restaurant(input: $input) {
-      error
+import { useRestaurantQuery } from "../../hooks/useRestaurantQuery";
+import {
+  createOrder,
+  createOrderVariables,
+} from "../../__generated__/createOrder";
+import { CreateOrderItemInput } from "../../__generated__/globalTypes";
+
+const CREATE_ORDER_MUTATION = gql`
+  mutation createOrder($input: CreateOrderInput!) {
+    createOrder(input: $input) {
       ok
-      restaurant {
-        ...RestaurantParts
-        menu {
-          ...DishParts
-        }
-      }
+      error
+      orderId
     }
   }
-  ${RESTAURANT_FRAGMENT}
-  ${DISH_FRAGMENT}
 `;
 
 interface IParamProp {
@@ -33,12 +29,12 @@ export interface IChoiceOrderedProps {
   parentName: string;
   name: string;
   price?: number | null;
-  count: number;
+  count?: number;
 }
 export interface IOptionOrderedProps {
   name: string;
   price?: number | null;
-  count: number;
+  count?: number;
   choices?: IChoiceOrderedProps[];
 }
 
@@ -58,47 +54,65 @@ export interface IDishOrderedProps {
 }
 
 export const Restaurant = () => {
-  const { id } = useParams<IParamProp>();
+  const params = useParams<IParamProp>();
+  const history = useHistory();
   const [orders, setOrders] = useState<IDishOrderedProps[]>([]);
+  const [bill, setBill] = useState<CreateOrderItemInput[]>([]);
 
-  const onCompleted = (data: restaurantQuery) => {
-    const menus = data?.restaurant.restaurant?.menu.map((dish) => ({
-      dishId: dish.id,
-      name: dish.name,
-      description: dish.description || "",
-      price: dish.price,
-      role: Role.dish,
-      count: 0,
-      options: dish.options?.map((option) => ({
-        name: option.name,
-        price: option.extra,
-        count: 0,
-        choices: option.choices?.map((choice) => ({
-          parentName: option.name,
-          name: choice.name,
-          price: choice.extra,
-          count: 0,
-        })),
-      })),
-    }));
-    if (menus) setOrders(menus);
-  };
-  const { loading, data } = useQuery<restaurantQuery, restaurantQueryVariables>(
-    RESTAURANT_QUERY,
-    {
-      variables: {
-        input: {
-          restaurantId: +id,
-        },
-      },
-      onCompleted,
-    }
-  );
+  const { loading, data } = useRestaurantQuery(+params.id, setOrders);
   const restaurant = data?.restaurant.restaurant;
 
+  const onCompleted = (data: createOrder) => {
+    const {
+      createOrder: { ok, orderId },
+    } = data;
+    if (ok) {
+      history.push(`/orders/${orderId}`);
+    }
+  };
+  const [createOrderMutation, { loading: placingOrder }] = useMutation<
+    createOrder,
+    createOrderVariables
+  >(CREATE_ORDER_MUTATION, { onCompleted });
+  const triggerConfirmOrder = async () => {
+    if (bill.length === 0) {
+      alert("Can't place empty order");
+      return;
+    }
+    const ok = window.confirm("You are about to place an order");
+    if (ok) {
+      createOrderMutation({
+        variables: {
+          input: {
+            restaurantId: +params.id,
+            items: bill,
+          },
+        },
+      });
+    }
+  };
+
+  const orderList: CreateOrderItemInput[] = orders
+    .filter((dish) => dish.count)
+    .map((dish) => ({
+      dishId: dish.dishId,
+      orderSize: dish.count || 0,
+      options: dish.options
+        ?.filter((option) => option.count)
+        .map((option) => ({
+          name: option.name,
+          orderSize: option.count || 0,
+          choices: option.choices
+            ?.filter((choice) => choice.count)
+            .map((choice) => ({ name: choice.name })),
+        })),
+    }));
   useEffect(() => {
-    // setOrders();
+    console.log(orderList);
+    setBill(orderList);
+    // console.log(orders);
   }, [orders]);
+
   return (
     <div>
       <Helmet>
@@ -120,58 +134,15 @@ export const Restaurant = () => {
               </h5>
               <h6 className="text-sm font-light">{restaurant?.address}</h6>
             </div>
-            <div className="bg-white max-w-sm py-8 px-8">
-              <div className="w-96 grid grid-rows-1">
-                {orders
-                  .filter((dish) => dish.count)
-                  .map((dish) => (
-                    <div className="space-x-3">
-                      <span>{dish.name}</span>
-                      <span>가격:{dish.price}</span>
-                      <span>:{dish.count}</span>
-
-                      <span>
-                        금액:
-                        {dish.price && dish.count && dish.price * dish.count}
-                      </span>
-                      {dish.options
-                        ?.filter((option) => option.count)
-                        .map((option) => (
-                          <div className="text-sm ml-3">
-                            <span>{option.name}</span>
-                            {option.price && <span>{option.price}</span>}
-                            <span>:{option.count}</span>
-
-                            {option.price && option.count && (
-                              <span>금액:{option.price * option.count}</span>
-                            )}
-
-                            {option.choices
-                              ?.filter((choice) => choice.count)
-                              .map((choice) => (
-                                <div className="ml-3">
-                                  <span>{choice.name}</span>
-                                  {choice.price && <span>{choice.price}</span>}
-                                  <span>:{choice.count}</span>
-
-                                  {choice.price && choice.count && (
-                                    <span>
-                                      금액:{choice.price * choice.count}
-                                    </span>
-                                  )}
-                                </div>
-                              ))}
-                          </div>
-                        ))}
-                    </div>
-                  ))}
-              </div>
-            </div>
+            <OrderList orders={orders} />
           </header>
 
           <div className="container p-10 ">
             <div className="grid grid-cols-8">
-              <button className="col-span-1 py-3 px-4 bg-red-700 text-white font-bold">
+              <button
+                onClick={triggerConfirmOrder}
+                className="col-span-1 py-3 px-4 bg-red-700 text-white font-bold"
+              >
                 전체주문 결제하기
               </button>
               <div className="grid grid-cols-3">

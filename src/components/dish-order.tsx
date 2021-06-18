@@ -86,7 +86,12 @@ const OrderCounter: React.FC<IOrderCounterProps> = ({
   };
   const otherChoices = (choices: IChoiceOrderedProps[] | undefined) => {
     if (choices) {
-      return choices.filter((choice) => choice.name !== name);
+      return choices
+        .filter((choice) => choice.name !== name)
+        .map((choice) => ({
+          ...choice,
+          count: 0,
+        }));
     } else {
       return [];
     }
@@ -173,32 +178,40 @@ const OrderCounter: React.FC<IOrderCounterProps> = ({
           </span>
         ) : null}
       </div>
-      <div className="text-sm flex flex-row items-center justify-end">
-        <div
-          className={`${
-            (!getCountSize() || !price) && "hidden"
-          } flex items-center`}
-        >
-          <button
-            onClick={subOrderSize}
-            className="focus:outline-none w-5 h-4 ring-1 rounded-full rounded-r-none align-middle leading-4"
-          >
-            -
-          </button>
-          <div className="w-5 h-5 text-center align-middle leading-5">
-            {getCountSize()}
-          </div>
-          <button
-            onClick={addOrderSize}
-            className="w-5 h-4 ring-1 rounded-full rounded-l-none align-middle leading-4"
-          >
-            +
+      {role === Role.choice ? (
+        <div className="text-sm flex flex-row items-center justify-end">
+          <button className="ml-3 w-4 h-4 ring-1 " onClick={toggleCheck}>
+            {getCountSize() ? <span>&#10003;</span> : null}
           </button>
         </div>
-        <button className="ml-3 w-4 h-4 ring-1 " onClick={toggleCheck}>
-          {getCountSize() ? <span>&#10003;</span> : null}
-        </button>
-      </div>
+      ) : (
+        <div className="text-sm flex flex-row items-center justify-end">
+          <div
+            className={`${
+              (!getCountSize() || !price) && "hidden"
+            } flex items-center`}
+          >
+            <button
+              onClick={subOrderSize}
+              className="focus:outline-none w-5 h-4 ring-1 rounded-full rounded-r-none align-middle leading-4"
+            >
+              -
+            </button>
+            <div className="w-5 h-5 text-center align-middle leading-5">
+              {getCountSize()}
+            </div>
+            <button
+              onClick={addOrderSize}
+              className="w-5 h-4 ring-1 rounded-full rounded-l-none align-middle leading-4"
+            >
+              +
+            </button>
+          </div>
+          <button className="ml-3 w-4 h-4 ring-1 " onClick={toggleCheck}>
+            {getCountSize() ? <span>&#10003;</span> : null}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
