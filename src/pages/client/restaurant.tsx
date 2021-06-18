@@ -75,12 +75,16 @@ export const Restaurant = () => {
     createOrderVariables
   >(CREATE_ORDER_MUTATION, { onCompleted });
   const triggerConfirmOrder = async () => {
+    if (placingOrder) {
+      return;
+    }
+
     if (bill.length === 0) {
       alert("Can't place empty order");
       return;
     }
     const ok = window.confirm("You are about to place an order");
-    if (ok) {
+    if (ok && !placingOrder) {
       createOrderMutation({
         variables: {
           input: {
