@@ -267,6 +267,7 @@ export const DishOrder: React.FC<IDishOrderProps> = ({
         .map((option, index) => (
           <div key={index} className="text-sm ml-5">
             <OrderCounter
+              unable={dish.invisible || dish.soldOut}
               dishID={dish.dishId}
               name={option.name}
               price={option.price}
@@ -282,6 +283,7 @@ export const DishOrder: React.FC<IDishOrderProps> = ({
                 .map((choice, index) => (
                   <div key={index}>
                     <OrderCounter
+                      unable={dish.invisible || dish.soldOut}
                       dishID={dish.dishId}
                       parentName={choice.parentName}
                       name={choice.name}
