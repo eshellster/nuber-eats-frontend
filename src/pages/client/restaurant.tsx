@@ -51,6 +51,8 @@ export interface IDishOrderedProps {
   role: Role;
   count?: number;
   options?: IOptionOrderedProps[];
+  invisible: boolean;
+  soldOut: boolean;
 }
 
 export const Restaurant = () => {
@@ -112,10 +114,10 @@ export const Restaurant = () => {
         })),
     }));
   useEffect(() => {
-    console.log(orderList);
+    // console.log(orderList);
     setBill(orderList);
     // console.log(orders);
-  }, [orders]);
+  }, [orders, orderList]);
 
   return (
     <div>
@@ -149,11 +151,6 @@ export const Restaurant = () => {
               >
                 전체주문 결제하기
               </button>
-              <div className="grid grid-cols-3">
-                {/* {orders.map((order, index) => (
-                  <div key={index}>{order.dishId}</div>
-                ))} */}
-              </div>
             </div>
             <div className="mt-10">
               {restaurant?.menu.length === 0 ? (

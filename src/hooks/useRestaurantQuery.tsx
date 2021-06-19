@@ -32,6 +32,8 @@ export const useRestaurantQuery = (restaurantId: number, setOrders: any) => {
       price: dish.price,
       role: Role.dish,
       count: 0,
+      invisible: dish.invisible,
+      soldOut: dish.soldOut,
       options: dish.options?.map((option) => ({
         name: option.name,
         price: option.extra,

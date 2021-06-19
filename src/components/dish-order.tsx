@@ -5,6 +5,8 @@ import {
   IOptionOrderedProps,
   Role,
 } from "../pages/client/restaurant";
+import soldout from "../images/soldout.png";
+import comingsoon from "../images/comingsoon.png";
 
 interface IDishOrderProps {
   dish: IDishOrderedProps;
@@ -13,6 +15,7 @@ interface IDishOrderProps {
 }
 
 export interface IOrderCounterProps {
+  unable?: boolean;
   dishID: number;
   parentName?: string;
   name: string;
@@ -22,6 +25,7 @@ export interface IOrderCounterProps {
   setOrders: React.Dispatch<React.SetStateAction<IDishOrderedProps[]>>;
 }
 const OrderCounter: React.FC<IOrderCounterProps> = ({
+  unable,
   dishID: dishId,
   name,
   price,
@@ -180,9 +184,11 @@ const OrderCounter: React.FC<IOrderCounterProps> = ({
       </div>
       {role === Role.choice ? (
         <div className="text-sm flex flex-row items-center justify-end">
-          <button className="ml-3 w-4 h-4 ring-1 " onClick={toggleCheck}>
-            {getCountSize() ? <span>&#10003;</span> : null}
-          </button>
+          {unable ? null : (
+            <button className="ml-3 w-4 h-4 ring-1 " onClick={toggleCheck}>
+              {getCountSize() ? <span>&#10003;</span> : null}
+            </button>
+          )}
         </div>
       ) : (
         <div className="text-sm flex flex-row items-center justify-end">
@@ -207,9 +213,11 @@ const OrderCounter: React.FC<IOrderCounterProps> = ({
               +
             </button>
           </div>
-          <button className="ml-3 w-4 h-4 ring-1 " onClick={toggleCheck}>
-            {getCountSize() ? <span>&#10003;</span> : null}
-          </button>
+          {unable ? null : (
+            <button className="ml-3 w-4 h-4 ring-1 " onClick={toggleCheck}>
+              {getCountSize() ? <span>&#10003;</span> : null}
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -222,9 +230,23 @@ export const DishOrder: React.FC<IDishOrderProps> = ({
   setOrders,
 }) => {
   return (
-    <div className="px-4 py-4 border-2 border-gray-500 hover:border-gray-800 transition-all">
+    <div className="relative px-4 py-4 border-2 border-gray-500 hover:border-gray-800 transition-all">
+      {dish.invisible ? (
+        <img
+          src={comingsoon}
+          alt="coming soon"
+          className="absolute w-60 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        />
+      ) : dish.soldOut ? (
+        <img
+          src={soldout}
+          alt="sold out"
+          className="absolute w-64 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        />
+      ) : null}
       <div className="text-2xl">
         <OrderCounter
+          unable={dish.invisible || dish.soldOut}
           dishID={dish.dishId}
           name={dish.name}
           price={dish.price ? dish.price : 0}
