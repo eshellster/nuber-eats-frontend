@@ -1,10 +1,12 @@
 import { gql, useMutation } from "@apollo/client";
-import React from "react";
+import React, { ChangeEvent, useCallback, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { Button } from "../../components/button";
+import { deleteDishVariables } from "../../__generated__/deleteDish";
 import { editDishVariables } from "../../__generated__/editDish";
+import { DeleteDishInput } from "../../__generated__/globalTypes";
 import {
   DishOptionInputType,
   EditDishInput,
@@ -30,21 +32,40 @@ interface IForm {
 interface IParamProps {
   id: string;
 }
+
+const useDeleteInput = (initialValue: string) => {
+  const [value, setValue] = useState(initialValue);
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+  };
+  return { value, onChange };
+};
+const EDIT_DISH_MUTATION = gql`
+  mutation editDish($editDishInput: EditDishInput!) {
+    editDish(input: $editDishInput) {
+      ok
+      error
+    }
+  }
+`;
+
+const DELETE_DISH_MUTATION = gql`
+  mutation deleteDish($deleteDishInput: DeleteDishInput!) {
+    deleteDish(input: $deleteDishInput) {
+      ok
+      error
+    }
+  }
+`;
+
 export const EditDish: React.FC = () => {
-  const { id } = useParams<IParamProps>();
+  const param = useParams<IParamProps>();
   const history = useHistory();
   const {
     state: { dish, restaurantId },
   } = useLocation<LocationState>();
 
-  const EDIT_DISH_MUTATION = gql`
-    mutation editDish($editDishInput: EditDishInput!) {
-      editDish(input: $editDishInput) {
-        ok
-        error
-      }
-    }
-  `;
+  const deleteMenu = useDeleteInput("");
 
   const [editDish, { loading }] = useMutation<EditDishInput, editDishVariables>(
     EDIT_DISH_MUTATION,
@@ -61,7 +82,21 @@ export const EditDish: React.FC = () => {
       ],
     }
   );
-
+  const [deleteDish] = useMutation<DeleteDishInput, deleteDishVariables>(
+    DELETE_DISH_MUTATION,
+    {
+      refetchQueries: [
+        {
+          query: MY_RESTAURANT_QUERY,
+          variables: {
+            input: {
+              id: restaurantId,
+            },
+          },
+        },
+      ],
+    }
+  );
   const {
     register,
     getValues,
@@ -84,6 +119,20 @@ export const EditDish: React.FC = () => {
     control,
     name: "options",
   });
+  // console.log(param.id);
+
+  const handleDeleteDish = () => {
+    if (matchName()) {
+      deleteDish({
+        variables: {
+          deleteDishInput: {
+            dishId: +param.id,
+          },
+        },
+      });
+      history.goBack();
+    }
+  };
 
   const onSubmit = () => {
     const {
@@ -113,14 +162,14 @@ export const EditDish: React.FC = () => {
       })),
     }));
 
-    console.log(JSON.stringify(org_options) === JSON.stringify(dish_options));
+    // console.log(JSON.stringify(org_options) === JSON.stringify(dish_options));
 
-    console.log("dish_options:", dish_options);
+    // console.log("dish_options:", dish_options);
 
     editDish({
       variables: {
         editDishInput: {
-          dishId: +id,
+          dishId: +param.id,
           ...(name !== dish.name && { name }),
           ...(price !== dish.price && { price: +price }),
           ...(soldOut !== dish.soldOut && { soldOut }),
@@ -134,6 +183,10 @@ export const EditDish: React.FC = () => {
     });
     history.goBack();
   };
+
+  const matchName = useCallback(() => {
+    return dish.name === deleteMenu.value;
+  }, [dish.name, deleteMenu.value]);
 
   return (
     <div className="mt-52 flex flex-col justify-center items-center">
@@ -186,6 +239,30 @@ export const EditDish: React.FC = () => {
         </div>
         <Button loading={loading} canClick={isValid} actionText="Save Dish" />
       </form>
+
+      <div className=" border-2 p-4 my-5 max-w-screen-sm w-full">
+        <div>
+          해당 메뉴를 삭제를 원하시면 아래에 메뉴의 이름을 입력해 주세요
+        </div>
+        <input
+          className="w-full border-2 p-2 my-2 border-red-700 rounded-md"
+          type="text"
+          placeholder="삭제할 메뉴 이름"
+          {...deleteMenu}
+        />
+        <div>
+          <button
+            className={`w-full bg-red-700 text-white p-2 focus:outline-none`}
+            style={{
+              backgroundColor: `${matchName() ? "#A50002" : "#A3a3a3"}`,
+              cursor: `${matchName() ? "pointer" : "default"}`,
+            }}
+            onClick={handleDeleteDish}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

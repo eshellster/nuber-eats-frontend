@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   IChoiceOrderedProps,
   IDishOrderedProps,
@@ -169,7 +169,7 @@ const OrderCounter: React.FC<IOrderCounterProps> = ({
     }
     setChecked(!checked);
   };
-  useEffect(() => {}, []);
+
   return (
     <div className=" grid grid-cols-3 ">
       <div className="col-span-2 grid grid-cols-4 items-center">

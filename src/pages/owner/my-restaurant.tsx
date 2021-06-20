@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useParams } from "react-router-dom";
 import { DishRestaurant } from "../../components/dish-restaurant";
@@ -31,35 +31,17 @@ interface IParams {
 }
 
 export const MyRestaurant = () => {
-  const { id } = useParams<IParams>();
+  const param = useParams<IParams>();
   const { data, loading } = useQuery<myRestaurant, myRestaurantVariables>(
     MY_RESTAURANT_QUERY,
     {
       variables: {
         input: {
-          id: +id,
+          id: +param.id,
         },
       },
     }
   );
-  // console.log(data);
-  // const [menu, setMenu] = useState(
-  //   data?.myRestaurant.restaurant?.menu?.sort(function (a, b) {
-  //     return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-  //   })
-  // );
-  // const [menu, setMenu] = useState(data?.myRestaurant.restaurant?.menu);
-
-  // useEffect(() => {
-  //   const menuSort = data?.myRestaurant.restaurant?.menu.map((menu) => menu);
-  //   setMenu(
-  //     menuSort?.sort(function (a, b) {
-  //       // 오름차순
-  //       return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-  //       // 광희, 명수, 재석, 형돈
-  //     })
-  //   );
-  // }, []);
 
   return (
     <div>
@@ -89,7 +71,7 @@ export const MyRestaurant = () => {
           </header>
           <div className="container p-10 ">
             <Link
-              to={`/restaurant/${id}/add-dish`}
+              to={`/restaurant/${param.id}/add-dish`}
               className=" mr-8 text-white bg-gray-800 py-3 px-10"
             >
               Add Dish &rarr;
@@ -105,7 +87,7 @@ export const MyRestaurant = () => {
                   {data?.myRestaurant.restaurant?.menu?.map((dish, index) => (
                     <DishRestaurant
                       dish={dish}
-                      restaurantId={+id}
+                      restaurantId={+param.id}
                       key={index}
                     />
                   ))}

@@ -50,7 +50,7 @@ export const SearchRestaurants = () => {
         },
       },
     });
-  }, [location]); // eslint-disable-line
+  }, [location, history, queryReadyToStart]);
   console.log(loading, data, called);
 
   return (

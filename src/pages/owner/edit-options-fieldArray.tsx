@@ -16,18 +16,6 @@ export const EditOptionFields: React.FC<IOptionFieldsProps> = ({
     name: "options",
   });
 
-  // useEffect(() => {
-  //   const dishOptions = control.defaultValuesRef.current.options;
-  //   if (dishOptions)
-  //     if (dishOptions.length > 0)
-  //       append(
-  //         dishOptions.map((option: any) => ({
-  //           name: option.name,
-  //           extra: option.extra | 0,
-  //         }))
-  //       );
-  // }, []);
-
   return (
     <>
       <div>
