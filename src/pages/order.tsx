@@ -1,8 +1,13 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useSubscription } from "@apollo/client";
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router";
+import { FULL_ORDERS_FRAGMENT } from "../fragments";
 import { getOrder, getOrderVariables } from "../__generated__/getOrder";
+import {
+  OrderUpdates,
+  OrderUpdatesVariables,
+} from "../__generated__/OrderUpdates";
 
 const GET_ORDER = gql`
   query getOrder($input: GetOrderInput!) {
@@ -10,21 +15,20 @@ const GET_ORDER = gql`
       ok
       error
       order {
-        id
-        status
-        total
-        driver {
-          email
-        }
-        customer {
-          email
-        }
-        restaurant {
-          name
-        }
+        ...FullOrderParts
       }
     }
   }
+  ${FULL_ORDERS_FRAGMENT}
+`;
+
+const ORDER_SUBSCRIPTION = gql`
+  subscription OrderUpdates($input: OrderUpdatesInput!) {
+    orderUpdates(input: $input) {
+      ...FullOrderParts
+    }
+  }
+  ${FULL_ORDERS_FRAGMENT}
 `;
 
 interface IParams {
@@ -41,6 +45,19 @@ export const Order = () => {
     },
   });
   const order = data?.getOrder.order;
+
+  const { data: subscriptionData } = useSubscription<
+    OrderUpdates,
+    OrderUpdatesVariables
+  >(ORDER_SUBSCRIPTION, {
+    variables: {
+      input: {
+        id: +params.id,
+      },
+    },
+  });
+  console.log(subscriptionData);
+
   return (
     <div className="mt-32 container flex justify-center">
       <Helmet>

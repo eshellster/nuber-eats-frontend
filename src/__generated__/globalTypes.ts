@@ -117,6 +117,10 @@ export interface OrderItemOptionInputType {
   choices?: OrderChoiceInputType[] | null;
 }
 
+export interface OrderUpdatesInput {
+  id: number;
+}
+
 export interface RestaurantInput {
   restaurantId: number;
 }
