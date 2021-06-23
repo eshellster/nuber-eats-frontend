@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router";
 import { getOrder, getOrderVariables } from "../__generated__/getOrder";
 
@@ -42,6 +43,9 @@ export const Order = () => {
   const order = data?.getOrder.order;
   return (
     <div className="mt-32 container flex justify-center">
+      <Helmet>
+        <title>주문 #{params.id} | Nuber Eats</title>
+      </Helmet>
       <div className="border border-gray-800 w-full max-w-screen-sm flex flex-col justify-center">
         <h4 className="bg-gray-800 w-full py-5 text-white text-center text-xl">
           Order #{params.id}
@@ -57,10 +61,14 @@ export const Order = () => {
             <span className="font-medium">{order?.customer?.email}</span>
           </div>
           <div className="border-t border-b py-5 border-gray-700">
-            Driver: <span className="font-medium">{order?.driver?.email}</span>
+            Driver:{" "}
+            <span className="font-medium">
+              {order?.driver?.email ? order?.driver?.email : "Not yet."}
+            </span>
           </div>
-          <span className=" text-center mt-5 mb-3  text-2xl text-lime-600">
-            Status: {order?.status}
+          <span className=" text-center mt-5 mb-3  text-xl ">
+            Status:
+            <span className="text-3xl text-lime-600"> {order?.status}</span>
           </span>
         </div>
       </div>

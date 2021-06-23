@@ -25,12 +25,12 @@ export const OrderList: React.FC<IOrderListProps> = ({ orders }) => {
                 ?.filter((option) => option.count)
                 .map((option, index) => (
                   <div key={index} className="text-sm ml-3">
-                    <span>{option.name}</span>
-                    {option.price && <span>{option.price}</span>}
-                    <span>:{option.count}</span>
+                    <span>{option.name} </span>
+                    {option.price && <span>가격:{option.price} </span>}
+                    <span> 수량:{option.count} </span>
 
                     {option.price && option.count && (
-                      <span>금액:{option.price * option.count}</span>
+                      <span> 합계:{option.price * option.count}</span>
                     )}
 
                     {option.choices
