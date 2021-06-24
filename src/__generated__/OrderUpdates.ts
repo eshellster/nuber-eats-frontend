@@ -6,38 +6,38 @@
 import { OrderUpdatesInput, OrderStatus } from "./globalTypes";
 
 // ====================================================
-// GraphQL subscription operation: OrderUpdates
+// GraphQL subscription operation: orderUpdates
 // ====================================================
 
-export interface OrderUpdates_orderUpdates_driver {
+export interface orderUpdates_orderUpdates_driver {
   __typename: "User";
   email: string;
 }
 
-export interface OrderUpdates_orderUpdates_customer {
+export interface orderUpdates_orderUpdates_customer {
   __typename: "User";
   email: string;
 }
 
-export interface OrderUpdates_orderUpdates_restaurant {
+export interface orderUpdates_orderUpdates_restaurant {
   __typename: "Restaurant";
   name: string;
 }
 
-export interface OrderUpdates_orderUpdates {
+export interface orderUpdates_orderUpdates {
   __typename: "Order";
   id: number;
   status: OrderStatus;
   total: number;
-  driver: OrderUpdates_orderUpdates_driver | null;
-  customer: OrderUpdates_orderUpdates_customer | null;
-  restaurant: OrderUpdates_orderUpdates_restaurant | null;
+  driver: orderUpdates_orderUpdates_driver | null;
+  customer: orderUpdates_orderUpdates_customer | null;
+  restaurant: orderUpdates_orderUpdates_restaurant | null;
 }
 
-export interface OrderUpdates {
-  orderUpdates: OrderUpdates_orderUpdates;
+export interface orderUpdates {
+  orderUpdates: orderUpdates_orderUpdates;
 }
 
-export interface OrderUpdatesVariables {
+export interface orderUpdatesVariables {
   input: OrderUpdatesInput;
 }

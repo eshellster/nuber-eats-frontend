@@ -1,13 +1,13 @@
 import { gql, useQuery, useSubscription } from "@apollo/client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router";
 import { FULL_ORDERS_FRAGMENT } from "../fragments";
 import { getOrder, getOrderVariables } from "../__generated__/getOrder";
 import {
-  OrderUpdates,
-  OrderUpdatesVariables,
-} from "../__generated__/OrderUpdates";
+  orderUpdates,
+  orderUpdatesVariables,
+} from "../__generated__/orderUpdates";
 
 const GET_ORDER = gql`
   query getOrder($input: GetOrderInput!) {
@@ -23,7 +23,7 @@ const GET_ORDER = gql`
 `;
 
 const ORDER_SUBSCRIPTION = gql`
-  subscription OrderUpdates($input: OrderUpdatesInput!) {
+  subscription orderUpdates($input: OrderUpdatesInput!) {
     orderUpdates(input: $input) {
       ...FullOrderParts
     }
@@ -37,26 +37,53 @@ interface IParams {
 
 export const Order = () => {
   const params = useParams<IParams>();
-  const { data } = useQuery<getOrder, getOrderVariables>(GET_ORDER, {
-    variables: {
-      input: {
-        id: +params.id,
+  const { data, subscribeToMore } = useQuery<getOrder, getOrderVariables>(
+    GET_ORDER,
+    {
+      variables: {
+        input: {
+          id: +params.id,
+        },
       },
-    },
-  });
+    }
+  );
   const order = data?.getOrder.order;
 
-  const { data: subscriptionData } = useSubscription<
-    OrderUpdates,
-    OrderUpdatesVariables
-  >(ORDER_SUBSCRIPTION, {
-    variables: {
-      input: {
-        id: +params.id,
-      },
-    },
-  });
-  console.log(subscriptionData);
+  // const { data: subscriptionData } = useSubscription<
+  //   orderUpdates,
+  //   orderUpdatesVariables
+  // >(ORDER_SUBSCRIPTION, {
+  //   variables: {
+  //     input: {
+  //       id: +params.id,
+  //     },
+  //   },
+  // });
+  // console.log(subscriptionData);
+
+  useEffect(() => {
+    if (data?.getOrder.ok) {
+      subscribeToMore({
+        document: ORDER_SUBSCRIPTION,
+        variables: {
+          input: {
+            id: +params.id,
+          },
+        },
+        updateQuery: (
+          prev,
+          {
+            subscriptionData: { data },
+          }: { subscriptionData: { data: orderUpdates } }
+        ) => {
+          if (!data) return prev;
+          return {
+            getOrder: { ...prev.getOrder, order: { ...data.orderUpdates } },
+          };
+        },
+      });
+    }
+  }, [data]);
 
   return (
     <div className="mt-32 container flex justify-center">
