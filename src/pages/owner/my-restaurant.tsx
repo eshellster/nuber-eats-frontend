@@ -82,14 +82,14 @@ export const MyRestaurant = () => {
     }
   );
 
-  console.log(getOrderData);
+  // console.log(getOrderData);
 
   const { data: subscriptionData } = useSubscription<pendingOrders>(
     PENDING_ORDER_SUBSCRIPTION
   );
   const history = useHistory();
   useEffect(() => {
-    console.log(subscriptionData);
+    // console.log(subscriptionData);
 
     if (subscriptionData?.pendingOrders.id) {
       history.push(`/orders/${subscriptionData.pendingOrders.id}`);
