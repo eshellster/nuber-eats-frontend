@@ -16,7 +16,7 @@ interface IHeaderProps {
 export const Header: React.FC<IHeaderProps> = ({ email }) => {
   const { data } = useMe();
   const client = useApolloClient();
-  console.log(data);
+  // console.log(data);
 
   return (
     <>

@@ -1,13 +1,20 @@
-import { gql, useQuery } from "@apollo/client";
-import React from "react";
+import { gql, useQuery, useSubscription } from "@apollo/client";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { DishRestaurant } from "../../components/dish-restaurant";
-import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragments";
+import {
+  DISH_FRAGMENT,
+  FULL_ORDERS_FRAGMENT,
+  RESTAURANT_FRAGMENT,
+} from "../../fragments";
+import { getOrders, getOrdersVariables } from "../../__generated__/getOrders";
+import { OrderStatus } from "../../__generated__/globalTypes";
 import {
   myRestaurant,
   myRestaurantVariables,
 } from "../../__generated__/myRestaurant";
+import { pendingOrders } from "../../__generated__/pendingOrders";
 
 export const MY_RESTAURANT_QUERY = gql`
   query myRestaurant($input: MyRestaurantInput!) {
@@ -24,6 +31,27 @@ export const MY_RESTAURANT_QUERY = gql`
   }
   ${RESTAURANT_FRAGMENT}
   ${DISH_FRAGMENT}
+`;
+
+const GET_ORDERS_QUERY = gql`
+  query getOrders($input: GetOrdersInput!) {
+    getOrders(input: $input) {
+      ok
+      error
+      orders {
+        ...FullOrderParts
+      }
+    }
+  }
+  ${FULL_ORDERS_FRAGMENT}
+`;
+const PENDING_ORDER_SUBSCRIPTION = gql`
+  subscription pendingOrders {
+    pendingOrders {
+      ...FullOrderParts
+    }
+  }
+  ${FULL_ORDERS_FRAGMENT}
 `;
 
 interface IParams {
@@ -43,6 +71,31 @@ export const MyRestaurant = () => {
     }
   );
 
+  const { data: getOrderData } = useQuery<getOrders, getOrdersVariables>(
+    GET_ORDERS_QUERY,
+    {
+      variables: {
+        input: {
+          status: null,
+        },
+      },
+    }
+  );
+
+  console.log(getOrderData);
+
+  const { data: subscriptionData } = useSubscription<pendingOrders>(
+    PENDING_ORDER_SUBSCRIPTION
+  );
+  const history = useHistory();
+  useEffect(() => {
+    console.log(subscriptionData);
+
+    if (subscriptionData?.pendingOrders.id) {
+      history.push(`/orders/${subscriptionData.pendingOrders.id}`);
+    }
+  }, [subscriptionData, history]);
+
   return (
     <div>
       <Helmet>
@@ -52,7 +105,7 @@ export const MyRestaurant = () => {
       {!loading && (
         <div>
           <header
-            className="bg-gray-500 w-full py-12 bg-no-repeat  bg-center bg-"
+            className="grid grid-cols-2 bg-gray-500 w-full py-12 bg-no-repeat  bg-center bg-"
             style={{
               backgroundImage: `url(${data?.myRestaurant.restaurant?.coverImg})`,
             }}
@@ -67,6 +120,31 @@ export const MyRestaurant = () => {
               <h6 className="text-sm font-light">
                 {data?.myRestaurant.restaurant?.address}
               </h6>
+            </div>
+            <div className="w-full flex justify-end ">
+              <div className="bg-white max-w-lg py-8 px-8 mr-10">
+                <h1>주문</h1>
+                {getOrderData?.getOrders.orders?.map((order, index) => (
+                  <div key={index}>
+                    <Link to={`/orders/${order.id}`} className="cursor-pointer">
+                      <span>#{order.id}</span>{" "}
+                      <span
+                        className={`${
+                          order.status === OrderStatus.Pending &&
+                          "text-blue-600"
+                        } ${
+                          order.status === OrderStatus.Cooking &&
+                          "text-lime-600"
+                        } ${
+                          order.status === OrderStatus.Cooked && "text-red-600"
+                        }`}
+                      >
+                        {order.status}
+                      </span>
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
           </header>
           <div className="container p-10 ">
