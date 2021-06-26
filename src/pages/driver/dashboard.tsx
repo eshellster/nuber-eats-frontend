@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import GoogleMapReact from "google-map-react";
+import { env } from "node:process";
 
 interface ICoords {
   lat: number;
@@ -31,6 +32,15 @@ export const Dashboard = () => {
   useEffect(() => {
     if (map) {
       map.panTo(new google.maps.LatLng(driverCoords.lat, driverCoords.lng));
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode(
+        {
+          location: new google.maps.LatLng(driverCoords.lat, driverCoords.lng),
+        },
+        (result, status) => {
+          console.log(status, result);
+        }
+      );
     }
   }, [driverCoords.lat, driverCoords.lng]);
   const onApiLoaded = ({ map }: { map: any }) => {
@@ -52,7 +62,7 @@ export const Dashboard = () => {
             lat: 37.2279,
             lng: 127.44635,
           }}
-          bootstrapURLKeys={{ key: "AIzaSyDl_Iujvzb_m6KvmD5CSwJ6drvgZbiP7Ng" }}
+          bootstrapURLKeys={{ key:  }}
         >
           <Driver lat={driverCoords.lat} lng={driverCoords.lng} />
         </GoogleMapReact>
