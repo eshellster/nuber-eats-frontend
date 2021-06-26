@@ -68,6 +68,7 @@
   },
   "devDependencies": {
     "@types/google-map-react": "^2.1.1",
+    "@types/googlemaps": "^3.43.3",
     "@types/react-helmet": "^6.1.1",
     "@types/react-router-dom": "^5.1.7",
     "stylelint-config-recommended": "^4.0.0"
