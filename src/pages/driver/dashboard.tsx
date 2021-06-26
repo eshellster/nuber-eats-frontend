@@ -16,13 +16,22 @@ export const Dashboard = () => {
   const onError = (error: PositionError) => {
     console.log(error);
   };
+  const [map, setMap] = useState<any>();
+  const [maps, setMaps] = useState<any>();
   useEffect(() => {
     navigator.geolocation.watchPosition(onSucces, onError, {
       enableHighAccuracy: true,
     });
   }, []);
+  useEffect(() => {
+    if (map && maps) {
+      map.panTo(new maps.LatLng(driverCoords.lat, driverCoords.lng));
+    }
+  }, [driverCoords.lat, driverCoords.lng]);
   const onApiLoaded = ({ map, maps }: { map: any; maps: any }) => {
     map.panTo(new maps.LatLng(driverCoords.lat, driverCoords.lng));
+    setMap(map);
+    setMaps(maps);
   };
   return (
     <div>
