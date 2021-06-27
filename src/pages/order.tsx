@@ -2,7 +2,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router";
-import { FULL_ORDERS_FRAGMENT } from "../fragments";
+import { FULL_ORDER_FRAGMENT } from "../fragments";
 import { useMe } from "../hooks/useMe";
 import { editOrder, editOrderVariables } from "../__generated__/editOrder";
 import { getOrder, getOrderVariables } from "../__generated__/getOrder";
@@ -19,7 +19,7 @@ const GET_ORDER = gql`
       }
     }
   }
-  ${FULL_ORDERS_FRAGMENT}
+  ${FULL_ORDER_FRAGMENT}
 `;
 
 const ORDER_SUBSCRIPTION = gql`
@@ -28,7 +28,7 @@ const ORDER_SUBSCRIPTION = gql`
       ...FullOrderParts
     }
   }
-  ${FULL_ORDERS_FRAGMENT}
+  ${FULL_ORDER_FRAGMENT}
 `;
 
 const EDIT_ORDER = gql`

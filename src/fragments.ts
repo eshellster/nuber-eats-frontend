@@ -32,7 +32,7 @@ export const DISH_FRAGMENT = gql`
   }
 `;
 
-export const FULL_ORDERS_FRAGMENT = gql`
+export const FULL_ORDER_FRAGMENT = gql`
   fragment FullOrderParts on Order {
     id
     status

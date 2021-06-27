@@ -5,7 +5,7 @@ import { Link, useHistory, useParams } from "react-router-dom";
 import { DishRestaurant } from "../../components/dish-restaurant";
 import {
   DISH_FRAGMENT,
-  FULL_ORDERS_FRAGMENT,
+  FULL_ORDER_FRAGMENT,
   RESTAURANT_FRAGMENT,
 } from "../../fragments";
 import { getOrders, getOrdersVariables } from "../../__generated__/getOrders";
@@ -43,7 +43,7 @@ const GET_ORDERS_QUERY = gql`
       }
     }
   }
-  ${FULL_ORDERS_FRAGMENT}
+  ${FULL_ORDER_FRAGMENT}
 `;
 const PENDING_ORDER_SUBSCRIPTION = gql`
   subscription pendingOrders {
@@ -51,7 +51,7 @@ const PENDING_ORDER_SUBSCRIPTION = gql`
       ...FullOrderParts
     }
   }
-  ${FULL_ORDERS_FRAGMENT}
+  ${FULL_ORDER_FRAGMENT}
 `;
 
 interface IParams {

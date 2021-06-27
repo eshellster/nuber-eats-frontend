@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from "react";
 import GoogleMapReact from "google-map-react";
-import { env } from "node:process";
+import { gql, useSubscription } from "@apollo/client";
+import { FULL_ORDER_FRAGMENT } from "../../fragments";
+import { coockedOrders } from "../../__generated__/coockedOrders";
+import { Link } from "react-router-dom";
+
+const COOCKED_ORDERS_SUBSCRIPTION = gql`
+  subscription coockedOrders {
+    cookedOrders {
+      ...FullOrderParts
+    }
+  }
+  ${FULL_ORDER_FRAGMENT}
+`;
 
 interface ICoords {
   lat: number;
@@ -13,8 +25,11 @@ interface IDriverProps {
   $hover?: any;
 }
 const Driver: React.FC<IDriverProps> = () => <div className="text-3xl">🚖</div>;
+
 export const Dashboard = () => {
   const [driverCoords, setDriverCoords] = useState<ICoords>({ lng: 0, lat: 0 });
+  const [map, setMap] = useState<google.maps.Map>();
+  //   const [maps, setMaps] = useState<any>();
   // @ts-ignore
   const onSucces = ({ coords: { latitude, longitude } }: Position) => {
     setDriverCoords({ lat: latitude, lng: longitude });
@@ -23,7 +38,6 @@ export const Dashboard = () => {
   const onError = (error: PositionError) => {
     console.log(error);
   };
-  const [map, setMap] = useState<google.maps.Map>();
   useEffect(() => {
     navigator.geolocation.watchPosition(onSucces, onError, {
       enableHighAccuracy: true,
@@ -32,6 +46,7 @@ export const Dashboard = () => {
   useEffect(() => {
     if (map) {
       map.panTo(new google.maps.LatLng(driverCoords.lat, driverCoords.lng));
+      /*
       const geocoder = new google.maps.Geocoder();
       geocoder.geocode(
         {
@@ -41,31 +56,100 @@ export const Dashboard = () => {
           console.log(status, result);
         }
       );
+      */
     }
   }, [driverCoords.lat, driverCoords.lng]);
   const onApiLoaded = ({ map }: { map: any }) => {
     map.panTo(new google.maps.LatLng(driverCoords.lat, driverCoords.lng));
     setMap(map);
+    //     setMaps(maps);
   };
+
+  const makeRoute = () => {
+    if (map) {
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer({
+        polylineOptions: {
+          strokeColor: "#000",
+          strokeOpacity: 1,
+          strokeWeight: 2,
+        },
+      });
+      directionsRenderer.setMap(map);
+      directionsService.route(
+        {
+          origin: {
+            location: new google.maps.LatLng(
+              driverCoords.lat,
+              driverCoords.lng
+            ),
+          },
+          destination: {
+            location: new google.maps.LatLng(
+              driverCoords.lat + 0.05,
+              driverCoords.lng + 0.05
+            ),
+          },
+          travelMode: google.maps.TravelMode.TRANSIT,
+        },
+        (result) => {
+          directionsRenderer.setDirections(result);
+        }
+      );
+    }
+  };
+  const { data: coockedOrdersData } = useSubscription<coockedOrders>(
+    COOCKED_ORDERS_SUBSCRIPTION
+  );
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    if (coockedOrdersData?.cookedOrders.id) {
+      makeRoute();
+    }
+  }, [coockedOrdersData]);
+
   return (
     <div>
       <div
         className="overflow-hidden"
-        style={{ width: window.innerWidth, height: "95vh" }}
+        style={{ width: window.innerWidth, height: "50vh" }}
       >
         <GoogleMapReact
           defaultZoom={15}
           yesIWantToUseGoogleMapApiInternals
           onGoogleApiLoaded={onApiLoaded}
-          draggable={false}
+          draggable={true}
           defaultCenter={{
             lat: 37.2279,
             lng: 127.44635,
           }}
-          bootstrapURLKeys={{ key:  }}
+          bootstrapURLKeys={{ key: "AIzaSyAahWuhvUOWUOgiwNtXuAomkPAlWMtSS5o" }}
         >
           <Driver lat={driverCoords.lat} lng={driverCoords.lng} />
         </GoogleMapReact>
+      </div>
+      <div className=" max-w-screen-sm mx-auto bg-white relative -top-10 shadow-lg py-8 px-5">
+        {coockedOrdersData?.cookedOrders.restaurant ? (
+          <>
+            <h1 className="text-center  text-3xl font-medium">
+              New Coocked Order
+            </h1>
+            <h1 className="text-center my-3 text-2xl font-medium">
+              Pick it up soon @{" "}
+              {coockedOrdersData?.cookedOrders.restaurant?.name}
+            </h1>
+            <Link
+              to={`/orders/${coockedOrdersData?.cookedOrders.id}`}
+              className="btn w-full  block  text-center mt-5"
+            >
+              Accept Challenge &rarr;
+            </Link>
+          </>
+        ) : (
+          <h1 className="text-center  text-3xl font-medium">
+            No orders yet...
+          </h1>
+        )}
       </div>
     </div>
   );
